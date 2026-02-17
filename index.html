@@ -1,24 +1,16 @@
 <!doctype html>
-<html lang="en" class="theme-ee">
+<html lang="en" class="theme-neutral">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EE Advisor Tool — Broadband · TV · Mobile · Tablets</title>
+  <title>Advisor Tool — Broadband · TV · Mobile · Tablets</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="theme-ee">
+<body class="theme-neutral">
   <header class="app-header">
     <div class="brand">
-      <div class="ee-dots" aria-hidden="true">
-        <span class="dot"></span><span class="dot"></span>
-      </div>
       <h1>Advisor Tool</h1>
-    </div>
-
-    <!-- Theme Toggle (Style C: modern pill) -->
-    <div class="theme-toggle" role="group" aria-label="Theme switch">
-      <button id="btnEE" class="pill active" type="button" data-theme="ee">EE</button>
-      <button id="btnBT" class="pill" type="button" data-theme="bt">BT</button>
+      <div class="sub">No customer data • Brand‑neutral</div>
     </div>
   </header>
 
@@ -26,9 +18,12 @@
     <section class="grid">
       <!-- LEFT: Inputs -->
       <div class="panel inputs">
-        <!-- Broadband (mandatory) -->
+
+        <!-- STEP 1: Broadband -->
+        <div class="step-banner">Step 1 — Broadband (required)</div>
         <div class="card">
-          <h2>Broadband (required)</h2>
+          <div class="coach">Ask: “What’s it like at busy times? Any buffering when everyone’s on?”</div>
+
           <div class="row">
             <label>Connection Type</label>
             <div class="options">
@@ -46,25 +41,27 @@
           <div class="row">
             <label>Common Triggers</label>
             <div class="checklist two-cols">
-              <label><input type="checkbox" data-trigger="bb_slow_evenings" /> Evening slowdowns / buffering</label>
-              <label><input type="checkbox" data-trigger="bb_gaming" /> Gaming at home</label>
+              <label><input type="checkbox" data-trigger="bb_slow_evenings" /> Evening slowdowns</label>
+              <label><input type="checkbox" data-trigger="bb_gaming" /> Gaming</label>
               <label><input type="checkbox" data-trigger="bb_4k" /> Multiple 4K streams</label>
-              <label><input type="checkbox" data-trigger="bb_wfh" /> Works from home / video calls</label>
-              <label><input type="checkbox" data-trigger="bb_uploads" /> Heavy uploads / backups</label>
-              <label><input type="checkbox" data-trigger="bb_smarthome" /> Smart home (10+ devices)</label>
-              <label><input type="checkbox" data-trigger="bb_blackspots" /> Wi‑Fi blackspots at home</label>
-              <label><input type="checkbox" data-trigger="bb_far_cab" /> Far from cabinet / line limits</label>
+              <label><input type="checkbox" data-trigger="bb_wfh" /> WFH calls</label>
+              <label><input type="checkbox" data-trigger="bb_uploads" /> Heavy uploads</label>
+              <label><input type="checkbox" data-trigger="bb_smarthome" /> Smart home (10+)</label>
+              <label><input type="checkbox" data-trigger="bb_blackspots" /> Wi‑Fi blackspots</label>
+              <label><input type="checkbox" data-trigger="bb_far_cab" /> Far from cabinet</label>
             </div>
           </div>
         </div>
 
-        <!-- TV (asked gate) -->
+        <!-- STEP 2: TV -->
+        <div class="step-banner">Step 2 — Ask About TV (required before TV options)</div>
         <div class="card">
-          <div class="row between">
-            <h2>TV (optional)</h2>
+          <div class="coach">Ask: “Do you watch live channels or mainly Netflix / Prime / NOW?”</div>
+          <div class="row between must-ask-row">
+            <label class="must-ask"><span class="emoji">⚠️</span> Confirm you have asked about TV</label>
             <label class="switch">
               <input type="checkbox" id="tvAsked" />
-              <span>Asked about TV</span>
+              <span>I have asked about TV</span>
             </label>
           </div>
 
@@ -72,25 +69,27 @@
             <div class="row">
               <label>TV & Streaming Triggers</label>
               <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="tv_netflix" /> Pays for Netflix separately</label>
+                <label><input type="checkbox" data-trigger="tv_netflix" /> Pays for Netflix</label>
                 <label><input type="checkbox" data-trigger="tv_sky" /> Pays for Sky</label>
-                <label><input type="checkbox" data-trigger="tv_now" /> Already uses NOW</label>
-                <label><input type="checkbox" data-trigger="tv_sports" /> Watches Sports</label>
-                <label><input type="checkbox" data-trigger="tv_movies" /> Watches Movies</label>
-                <label><input type="checkbox" data-trigger="tv_apps" /> Mostly uses apps / no aerial</label>
-                <label><input type="checkbox" data-trigger="tv_allinone" /> Wants all‑in‑one box</label>
+                <label><input type="checkbox" data-trigger="tv_now" /> Uses NOW</label>
+                <label><input type="checkbox" data-trigger="tv_sports" /> Sports</label>
+                <label><input type="checkbox" data-trigger="tv_movies" /> Movies</label>
+                <label><input type="checkbox" data-trigger="tv_apps" /> Mostly apps</label>
+                <label><input type="checkbox" data-trigger="tv_allinone" /> All‑in‑one box wanted</label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Mobile (asked gate) -->
+        <!-- STEP 3: Mobile -->
+        <div class="step-banner">Step 3 — Ask About Mobile (required before Mobile options)</div>
         <div class="card">
-          <div class="row between">
-            <h2>Mobile (optional)</h2>
+          <div class="coach">Ask: “Who’s your mobile with and roughly what do you pay?”</div>
+          <div class="row between must-ask-row">
+            <label class="must-ask"><span class="emoji">⚠️</span> Confirm you have asked about Mobile</label>
             <label class="switch">
               <input type="checkbox" id="mobileAsked" />
-              <span>Asked about Mobile</span>
+              <span>I have asked about Mobile</span>
             </label>
           </div>
 
@@ -98,31 +97,30 @@
             <div class="row">
               <label>Mobile Triggers</label>
               <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="m_high_bill" /> High bill on other network</label>
-                <label><input type="checkbox" data-trigger="m_mvno" /> On MVNO (Lebara/GG/Smarty)</label>
+                <label><input type="checkbox" data-trigger="m_high_bill" /> High bill</label>
+                <label><input type="checkbox" data-trigger="m_mvno" /> On MVNO</label>
                 <label><input type="checkbox" data-trigger="m_indoor" /> Poor indoor signal</label>
-                <label><input type="checkbox" data-trigger="m_ooc" /> Out of contract / tired device</label>
-                <label><input type="checkbox" data-trigger="m_one" /> Needs “one plan covers all”</label>
-                <label><input type="checkbox" data-trigger="m_family" /> Family needs SIMs    <label><input type="checkbox" data-trigger="m_android" /> Android household</label>
-                <label><input type="checkbox" data-trigger="m_apple" /> Apple household</label>
-                <label><input type="checkbox" data-trigger="m_lowdata" /> Low data allowance problems</label>
+                <label><input type="checkbox" data-trigger="m_ooc" /> Out of contract</label>
+                <label><input type="checkbox" data-trigger="m_one" /> Needs one‑plan coverage</label>
+                <label><input type="checkbox" data-trigger="m_family" /> Family lines</label>
+                <label><input type="checkbox" data-trigger="m_android" /> Android home</label>
+                <label><input type="checkbox" data-trigger="m_apple" /> Apple home</label>
+                <label><input type="checkbox" data-trigger="m_lowdata" /> Low data allowance</label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Tablets (auto section; shows when any ticked) -->
+        <!-- STEP 4: Tablets -->
+        <div class="step-banner">Step 4 — Tablets (optional)</div>
         <div class="card">
-          <h2>Tablets</h2>
-          <div class="row">
-            <label>Tablet Triggers</label>
-            <div class="checklist two-cols">
-              <label><input type="checkbox" data-trigger="t_streams_on_phone" /> Streams on phone a lot</label>
-              <label><input type="checkbox" data-trigger="t_uses_laptop" /> Uses laptop for TV</label>
-              <label><input type="checkbox" data-trigger="t_kids_screen" /> Kids need shared screen</label>
-              <label><input type="checkbox" data-trigger="t_android_home" /> Android household</label>
-              <label><input type="checkbox" data-trigger="t_apple_home" /> Apple household</label>
-            </div>
+          <div class="coach">Ask: “Do you watch on your phone or laptop a lot at home?”</div>
+          <div class="checklist two-cols">
+            <label><input type="checkbox" data-trigger="t_streams_on_phone" /> Streams on phone</label>
+            <label><input type="checkbox" data-trigger="t_uses_laptop" /> Uses laptop for TV</label>
+            <label><input type="checkbox" data-trigger="t_kids_screen" /> Kids need shared screen</label>
+            <label><input type="checkbox" data-trigger="t_android_home" /> Android household</label>
+            <label><input type="checkbox" data-trigger="t_apple_home" /> Apple household</label>
           </div>
         </div>
 
@@ -138,47 +136,4 @@
         <div class="card">
           <h2>Broadband — Top 3</h2>
           <div id="bbResults" class="results"></div>
-        </div>
-
-        <div class="card">
-          <h2>TV — Top 3</h2>
-          <div id="tvResults" class="results empty">Ask about TV to show recommendations.</div>
-        </div>
-
-        <div class="card">
-          <h2>Mobile — Top 3</h2>
-          <div id="mobileResults" class="results empty">Ask about Mobile to show recommendations.</div>
-        </div>
-
-        <div class="card">
-          <h2>Tablets — Top 3</h2>
-          <div id="tabletResults" class="results empty">Tick a tablet trigger to see suggestions.</div>
-        </div>
-
-        <div class="card">
-          <h2>Final Script</h2>
-          <textarea id="finalScript" rows="10" class="script" placeholder="Click Evaluate to generate the final script…"></textarea>
-          <div class="row">
-            <button id="btnCopy" class="btn secondary">Copy Final Script</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Objection Handling</h2>
-          <div class="row">
-            <label for="objectionSelect">Common Objection</label>
-            <select id="objectionSelect"></select>
-          </div>
-          <p id="objectionResponse" class="objection"></p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <small>EE/BT Advisor Tool — demo build. No customer data stored.</small>
-  </footer>
-
-  app.js</script>
-</body>
-</html>
+        </div
