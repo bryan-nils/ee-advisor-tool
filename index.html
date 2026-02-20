@@ -19,7 +19,8 @@
 
   <main class="container">
     <section class="grid">
-      <!-- LEFT: Inputs -->
+      
+      <!-- LEFT SIDE INPUTS -->
       <div class="panel inputs">
 
         <!-- STEP 1: Broadband -->
@@ -30,28 +31,28 @@
           <div class="row">
             <label>Connection Type</label>
             <div class="options">
-              <label class="chip"><input type="radio" name="bbType" value="COPPER" /> Copper</label>
-              <label class="chip"><input type="radio" name="bbType" value="FTTC" /> FTTC</label>
-              <label class="chip"><input type="radio" name="bbType" value="FTTP" /> Full Fibre</label>
+              <label class="chip"><input type="radio" name="bbType" value="COPPER"> Copper</label>
+              <label class="chip"><input type="radio" name="bbType" value="FTTC"> FTTC</label>
+              <label class="chip"><input type="radio" name="bbType" value="FTTP"> Full Fibre</label>
             </div>
           </div>
 
           <div class="row conditional" id="fttcSpeedRow" hidden>
             <label>FTTC Sync Speed (Mb/s)</label>
-            <input type="number" id="fttcSpeed" min="1" step="1" placeholder="e.g. 24" />
+            <input type="number" id="fttcSpeed" min="1" step="1" placeholder="e.g. 24">
           </div>
 
           <div class="row">
             <label>Broadband Triggers</label>
             <div class="checklist two-cols">
-              <label><input type="checkbox" data-trigger="bb_slow_evenings" /> Evening slowdowns</label>
-              <label><input type="checkbox" data-trigger="bb_gaming" /> Gaming</label>
-              <label><input type="checkbox" data-trigger="bb_4k" /> 4K streaming</label>
-              <label><input type="checkbox" data-trigger="bb_wfh" /> WFH calls</label>
-              <label><input type="checkbox" data-trigger="bb_uploads" /> Heavy uploads</label>
-              <label><input type="checkbox" data-trigger="bb_smarthome" /> Smart home (10+)</label>
-              <label><input type="checkbox" data-trigger="bb_blackspots" /> Wi‑Fi blackspots</label>
-              <label><input type="checkbox" data-trigger="bb_far_cab" /> Far from cabinet</label>
+              <label><input type="checkbox" data-trigger="bb_slow_evenings"> Evening slowdowns</label>
+              <label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
+              <label><input type="checkbox" data-trigger="bb_4k"> 4K streaming</label>
+              <label><input type="checkbox" data-trigger="bb_wfh"> WFH calls</label>
+              <label><input type="checkbox" data-trigger="bb_uploads"> Heavy uploads</label>
+              <label><input type="checkbox" data-trigger="bb_smarthome"> Smart home (10+)</label>
+              <label><input type="checkbox" data-trigger="bb_blackspots"> Wi‑Fi blackspots</label>
+              <label><input type="checkbox" data-trigger="bb_far_cab"> Far from cabinet</label>
             </div>
           </div>
         </div>
@@ -63,7 +64,7 @@
           <div class="row between must-ask-row">
             <label class="must-ask">⚠️ Confirm you asked about TV</label>
             <label class="switch">
-              <input type="checkbox" id="tvAsked" />
+              <input type="checkbox" id="tvAsked">
               <span>I have asked about TV</span>
             </label>
           </div>
@@ -72,13 +73,13 @@
             <div class="row">
               <label>TV Triggers</label>
               <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="tv_netflix" /> Pays for Netflix</label>
-                <label><input type="checkbox" data-trigger="tv_sky" /> Pays for Sky</label>
-                <label><input type="checkbox" data-trigger="tv_now" /> Uses NOW</label>
-                <label><input type="checkbox" data-trigger="tv_sports" /> Sports</label>
-                <label><input type="checkbox" data-trigger="tv_movies" /> Movies</label>
-                <label><input type="checkbox" data-trigger="tv_apps" /> Apps only</label>
-                <label><input type="checkbox" data-trigger="tv_allinone" /> Wants all‑in‑one box</label>
+                <label><input type="checkbox" data-trigger="tv_netflix"> Pays for Netflix</label>
+                <label><input type="checkbox" data-trigger="tv_sky"> Pays for Sky</label>
+                <label><input type="checkbox" data-trigger="tv_now"> Uses NOW</label>
+                <label><input type="checkbox" data-trigger="tv_sports"> Sports</label>
+                <label><input type="checkbox" data-trigger="tv_movies"> Movies</label>
+                <label><input type="checkbox" data-trigger="tv_apps"> Apps only</label>
+                <label><input type="checkbox" data-trigger="tv_allinone"> Wants all‑in‑one box</label>
               </div>
             </div>
           </div>
@@ -91,7 +92,7 @@
           <div class="row between must-ask-row">
             <label class="must-ask">⚠️ Confirm you asked about Mobile</label>
             <label class="switch">
-              <input type="checkbox" id="mobileAsked" />
+              <input type="checkbox" id="mobileAsked">
               <span>I have asked about Mobile</span>
             </label>
           </div>
@@ -100,15 +101,15 @@
             <div class="row">
               <label>Mobile Triggers</label>
               <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="m_high_bill" /> High bill</label>
-                <label><input type="checkbox" data-trigger="m_mvno" /> On MVNO</label>
-                <label><input type="checkbox" data-trigger="m_indoor" /> Poor indoor signal</label>
-                <label><input type="checkbox" data-trigger="m_ooc" /> Out of contract</label>
-                <label><input type="checkbox" data-trigger="m_one" /> Wants all‑in‑one</label>
-                <label><input type="checkbox" data-trigger="m_family" /> Family lines</label>
-                <label><input type="checkbox" data-trigger="m_android" /> Android home</label>
-                <label><input type="checkbox" data-trigger="m_apple" /> Apple home</label>
-                <label><input type="checkbox" data-trigger="m_lowdata" /> Low data allowance</label>
+                <label><input type="checkbox" data-trigger="m_high_bill"> High bill</label>
+                <label><input type="checkbox" data-trigger="m_mvno"> On MVNO</label>
+                <label><input type="checkbox" data-trigger="m_indoor"> Poor indoor signal</label>
+                <label><input type="checkbox" data-trigger="m_ooc"> Out of contract</label>
+                <label><input type="checkbox" data-trigger="m_one"> Wants all‑in‑one</label>
+                <label><input type="checkbox" data-trigger="m_family"> Family lines</label>
+                <label><input type="checkbox" data-trigger="m_android"> Android home</label>
+                <label><input type="checkbox" data-trigger="m_apple"> Apple home</label>
+                <label><input type="checkbox" data-trigger="m_lowdata"> Low data allowance</label>
               </div>
             </div>
           </div>
@@ -118,15 +119,14 @@
         <div class="step-banner">Step 4 — Tablets</div>
         <div class="card">
           <div class="checklist two-cols">
-            <label><input type="checkbox" data-trigger="t_streams_on_phone" /> Streams on phone</label>
-            <label><input type="checkbox" data-trigger="t_uses_laptop" /> Uses laptop for TV</label>
-            <label><input type="checkbox" data-trigger="t_kids_screen" /> Kids need screen</label>
-            <label><input type="checkbox" data-trigger="t_android_home" /> Android home</label>
-            <label><input type="checkbox" data-trigger="t_apple_home" /> Apple home</label>
+            <label><input type="checkbox" data-trigger="t_streams_on_phone"> Streams on phone</label>
+            <label><input type="checkbox" data-trigger="t_uses_laptop"> Uses laptop for TV</label>
+            <label><input type="checkbox" data-trigger="t_kids_screen"> Kids need screen</label>
+            <label><input type="checkbox" data-trigger="t_android_home"> Android home</label>
+            <label><input type="checkbox" data-trigger="t_apple_home"> Apple home</label>
           </div>
         </div>
 
-        <!-- ACTIONS -->
         <div class="row actions">
           <button id="btnEvaluate" class="btn primary">Evaluate Recommendations</button>
           <button id="btnReset" class="btn ghost">Reset</button>
@@ -164,9 +164,8 @@
     </section>
   </main>
 
-  <!-- Correct JS link -->
-  <script src="app
+  <!-- Correct JavaScript link -->
+  app.js</script>
 
 </body>
 </html>
-
