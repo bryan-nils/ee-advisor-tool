@@ -363,89 +363,269 @@
   <!-- =======================
        INLINE JAVASCRIPT HERE
        ======================= -->
-  <script>
+ <script>
+  /* ===============================
+     UI toggles / input bindings
+     =============================== */
+  const tvAskedEl = document.getElementById("tvAsked");
+  const tvBlock   = document.getElementById("tvBlock");
+  const mobileAskedEl = document.getElementById("mobileAsked");
+  const mobileBlock   = document.getElementById("mobileBlock");
 
-    // show/hide TV block
-    document.getElementById("tvAsked").addEventListener("change", (e) => {
-      document.getElementById("tvBlock").hidden = !e.target.checked;
+  const fttcSpeedRow  = document.getElementById("fttcSpeedRow");
+  const fttcSpeedInput= document.getElementById("fttcSpeed");
+
+  // Expand/collapse TV & Mobile sections when asked
+  tvAskedEl.addEventListener("change", (e)=> { tvBlock.hidden    = !e.target.checked; });
+  mobileAskedEl.addEventListener("change", (e)=> { mobileBlock.hidden = !e.target.checked; });
+
+  // Show FTTC speed box only when FTTC selected
+  document.querySelectorAll('input[name="bbType"]').forEach(r => {
+    r.addEventListener("change", ()=>{
+      fttcSpeedRow.hidden = r.value !== "FTTC" || !r.checked;
     });
+  });
 
-    // show/hide Mobile block
-    document.getElementById("mobileAsked").addEventListener("change", (e) => {
-      document.getElementById("mobileBlock").hidden = !e.target.checked;
-    });
+  // Helpers to read inputs
+  function getBBType(){
+    return document.querySelector("input[name='bbType']:checked")?.value || null;
+  }
+  function getTriggers(){
+    const t = {};
+    document.querySelectorAll("[data-trigger]").forEach(cb => { t[cb.dataset.trigger] = cb.checked; });
+    return t;
+  }
 
-    // show FTTC speed row
-    document.querySelectorAll('input[name="bbType"]').forEach((r) => {
-      r.addEventListener("change", () => {
-        document.getElementById("fttcSpeedRow").hidden = (r.value !== "FTTC");
-      });
-    });
+  /* ===============================
+     Scoring: Broadband (with overrides)
+     =============================== */
+  function scoreBroadband(ctx){
+    const { bbType, fttcSpeed, triggers } = ctx;
+    const out = [];
 
-    // Get triggers
-    function getTriggers() {
-      const t = {};
-      document.querySelectorAll("[data-trigger]").forEach(cb => {
-        t[cb.dataset.trigger] = cb.checked;
-      });
-      return t;
+    // Helper
+    const add = (name, why, pts)=> {
+      const hit = out.find(x=>x.name===name);
+      if(hit){ hit.score += pts; hit.why.push(why); }
+      else { out.push({ name, score: pts, why: [why] }); }
+    };
+
+    // Overrides
+    if (bbType === "COPPER") {
+      return [{ name:"Mobile Broadband (4G/5G)", score:999, why:["Copper line → bypass with 4G/5G"] }];
+    }
+    if (bbType === "FTTC" && fttcSpeed && Number(fttcSpeed) < 30){
+      return [{ name:"Mobile Broadband (4G/5G)", score:999, why:["FTTC sync < 30 Mb/s → MBB only"] }];
     }
 
-    // scoring example
-    function scoreBroadband(ctx) {
-      const { bbType, fttcSpeed, triggers } = ctx;
-      const out = [];
+    // Drivers
+    if (triggers.bb_4k)           add("Full Fibre 500",              "Multiple 4K streams",                 3);
+    if (triggers.bb_gaming)        add("Full Fibre 300",              "Gaming stability / latency",          2);
+    if (triggers.bb_wfh)           add("Full Fibre 500",              "WFH calls / stability",               2);
+    if (triggers.bb_uploads)       add("Full Fibre 900",              "Heavy uploads / backups",             2);
+    if (triggers.bb_smarthome)     add("Full Fibre 900",              "Smart home 10+ devices",              3);
+    if (triggers.bb_slow_evenings) add("Full Fibre 150",              "Evening slowdowns",                   2);
+    if (triggers.bb_far_cab)       add("Mobile Broadband (4G/5G)",    "Far from cabinet → line limits",      2);
+    if (triggers.bb_blackspots)    add("Premium Wi‑Fi / Mesh",        "Wi‑Fi blackspots at home",            3);
 
-      function add(name, score) {
-        out.push({ name, score });
-      }
-
-      if (bbType === "COPPER") return [{ name: "Mobile Broadband (4G/5G)", score: 999 }];
-
-      if (bbType === "FTTC" && fttcSpeed && Number(fttcSpeed) < 30)
-        return [{ name: "Mobile Broadband (4G/5G)", score: 999 }];
-
-      if (triggers.bb_4k) add("Full Fibre 500", 3);
-      if (triggers.bb_gaming) add("Full Fibre 300", 2);
-      if (triggers.bb_slow_evenings) add("Full Fibre 150", 1);
-
-      if (out.length === 0) add("Full Fibre 150", 1);
-
-      return out.sort((a, b) => b.score - a.score).slice(0, 3);
+    // Gentle default if nothing fired
+    if (out.length===0) {
+      if (bbType==="FTTP") add("Full Fibre 300", "General uplift on Full Fibre", 1);
+      else                 add("Full Fibre 150", "General uplift",               1);
     }
 
-    function render(list, node) {
-      node.innerHTML = "";
-      list.forEach((item) => {
-        node.innerHTML += `<div class='result'><strong>${item.name}</strong></div>`;
-      });
+    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  }
+
+  /* ===============================
+     Scoring: TV (gated by asked)
+     =============================== */
+  function scoreTV(ctx){
+    const { tvAsked, triggers } = ctx;
+    if(!tvAsked) return [];
+
+    const out = [];
+    const add = (name, why, pts)=> {
+      const hit = out.find(x=>x.name===name);
+      if(hit){ hit.score += pts; hit.why.push(why); }
+      else { out.push({ name, score: pts, why: [why] }); }
+    };
+
+    if (triggers.tv_netflix)  add("Entertainment + Netflix", "Already paying Netflix → consolidate", 3);
+    if (triggers.tv_sky)      add("NOW Entertainment (via TV box)", "Pays Sky → NOW route",           3);
+    if (triggers.tv_now)      add("NOW Entertainment (via TV box)", "Already uses NOW",                2);
+    if (triggers.tv_sports)   add("Sports Pack",               "Watches sports",                       3);
+    if (triggers.tv_movies)   add("Cinema Pack",               "Watches movies",                       2);
+    if (triggers.tv_apps)     add("Core TV + Apps",            "App‑first viewing",                    2);
+    if (triggers.tv_allinone) add("Entertainment + Netflix",   "Wants all‑in‑one",                     1);
+
+    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  }
+
+  /* ===============================
+     Scoring: Mobile (gated by asked)
+     =============================== */
+  function scoreMobile(ctx){
+    const { mobileAsked, triggers } = ctx;
+    if(!mobileAsked) return [];
+
+    const out = [];
+    const add = (name, why, pts)=> {
+      const hit = out.find(x=>x.name===name);
+      if(hit){ hit.score += pts; hit.why.push(why); }
+      else { out.push({ name, score: pts, why: [why] }); }
+    };
+
+    if (triggers.m_high_bill || triggers.m_one) add("One Plan (Unlimited)", "High bill / wants one‑plan", 3);
+    if (triggers.m_mvno)        add("All‑Rounder SIM",    "On MVNO → peak‑time slowdowns",             3);
+    if (triggers.m_indoor)      add("Wi‑Fi Calling SIM",  "Poor indoor signal → Wi‑Fi calling",        3);
+    if (triggers.m_ooc)         add("Handset Upgrade",    "Out of contract / tired device",            2);
+    if (triggers.m_family)      add("Family Add‑Lines",   "Family needs SIMs",                          2);
+    if (triggers.m_android)     add("All‑Rounder SIM",    "Android household",                          1);
+    if (triggers.m_apple)       add("Wi‑Fi Calling SIM",  "Apple household",                            1);
+    if (triggers.m_lowdata)     add("All‑Rounder SIM",    "Low data allowance",                         1);
+
+    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  }
+
+  /* ===============================
+     Scoring: Tablets (auto when any tablet trigger)
+     =============================== */
+  function scoreTablets(ctx){
+    const { triggers } = ctx;
+    const any = ["t_streams_on_phone","t_uses_laptop","t_kids_screen","t_android_home","t_apple_home"]
+      .some(k => !!triggers[k]);
+    if(!any) return [];
+
+    const out = [];
+    const add = (name, why, pts)=> {
+      const hit = out.find(x=>x.name===name);
+      if(hit){ hit.score += pts; hit.why.push(why); }
+      else { out.push({ name, score: pts, why: [why] }); }
+    };
+
+    if (triggers.t_android_home)    add("Android Tab — Samsung A9", "Android household", 3);
+    if (triggers.t_streams_on_phone)add("Honor X8a",                 "Streams on phone → offload", 2);
+    if (triggers.t_uses_laptop)     add("Lenovo Luna",               "Free up the laptop for work", 2);
+    if (triggers.t_kids_screen)     { add("Android Tab — Samsung A9","Kids shared screen",1); add("iPad (Entry)","Kids shared screen",1); }
+    if (triggers.t_apple_home)      add("iPad (Entry)",              "Apple household", 3);
+
+    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  }
+
+  /* ===============================
+     Rendering helpers
+     =============================== */
+  const bbNode     = document.getElementById("bbResults");
+  const tvNode     = document.getElementById("tvResults");
+  const mobileNode = document.getElementById("mobileResults");
+  const tabNode    = document.getElementById("tabletResults");
+  const finalScript= document.getElementById("finalScript");
+
+  function renderList(node, list, emptyMsg){
+    node.innerHTML = "";
+    if(!list.length){
+      node.textContent = emptyMsg;
+      return;
     }
-
-    // evaluate handler
-    document.getElementById("btnEvaluate").addEventListener("click", () => {
-
-      const triggers = getTriggers();
-      const bbType = document.querySelector("input[name='bbType']:checked")?.value;
-
-      if (!bbType) {
-        alert("Select broadband type first");
-        return;
-      }
-
-      const fttcSpeed = document.getElementById("fttcSpeedRow").hidden ? null : document.getElementById("fttcSpeed").value;
-
-      const ctx = { bbType, fttcSpeed, triggers };
-
-      // broadband:
-      const bb = scoreBroadband(ctx);
-      render(bb, document.getElementById("bbResults"));
-
-      // TODO: You can add TV, Mobile, Tablet scoring functions here (like the BB one)
-      // For now they are blank until added
+    list.forEach((r, i)=>{
+      const rank = i===0 ? "Best match" : i===1 ? "Strong alternative" : "Backup option";
+      const why  = r.why?.length ? ` <span style="color:#6b7280">(${r.why.join(" · ")})</span>` : "";
+      node.insertAdjacentHTML("beforeend", `<div class="result"><strong>${r.name}</strong><span class="badge">${rank}</span>${why}</div>`);
     });
+  }
 
-  </script>
+  function buildFinalScript(bb, tv, m, tb){
+    const lines = [];
+    if(bb[0]) lines.push(`Broadband — ${bb[0].name}: solves ${bb[0].why?.join(", ") || "your main pain points"}.`);
+    if(tv[0]) lines.push(`TV — ${tv[0].name}: fits because ${tv[0].why?.join(", ")}.`);
+    if(m[0])  lines.push(`Mobile — ${m[0].name}: addresses ${m[0].why?.join(", ")}.`);
+    if(tb[0]) lines.push(`Tablet — ${tb[0].name}: ${tb[0].why?.join(", ")}.`);
 
+    const alts = [];
+    if(bb[1]) alts.push(`BB alt: ${bb[1].name}`);
+    if(tv[1]) alts.push(`TV alt: ${tv[1].name}`);
+    if(m[1])  alts.push(`Mobile alt: ${m[1].name}`);
+    if(tb[1]) alts.push(`Tablet alt: ${tb[1].name}`);
+
+    const backs = [];
+    if(bb[2]) backs.push(`BB backup: ${bb[2].name}`);
+    if(tv[2]) backs.push(`TV backup: ${tv[2].name}`);
+    if(m[2])  backs.push(`Mobile backup: ${m[2].name}`);
+    if(tb[2]) backs.push(`Tablet backup: ${tb[2].name}`);
+
+    const intro = `Based on what you’ve told me, here’s what actually fits how you use things:`;
+    const core  = lines.map(l=>`• ${l}`).join("\n");
+    const altTx = alts.length ? `\n\nIf you want to compare alternatives:\n${alts.map(a=>`• ${a}`).join("\n")}` : "";
+    const bakTx = backs.length ? `\n\nIf you want something lighter as a backup:\n${backs.map(a=>`• ${a}`).join("\n")}` : "";
+    return `${intro}\n\n${core}${altTx}${bakTx}`;
+  }
+
+  /* ===============================
+     Evaluate & Reset
+     =============================== */
+  document.getElementById("btnEvaluate").addEventListener("click", ()=>{
+    const bbType = getBBType();
+    if(!bbType){
+      alert("Step 1 — Please select the Broadband connection type.");
+      return;
+    }
+
+    const fttcSpeed = (bbType==='FTTC' && !fttcSpeedRow.hidden) ? (fttcSpeedInput.value || null) : null;
+    const triggers  = getTriggers();
+
+    const ctx = {
+      bbType,
+      fttcSpeed,
+      tvAsked: tvAskedEl.checked,
+      mobileAsked: mobileAskedEl.checked,
+      triggers
+    };
+
+    // Score
+    const bb = scoreBroadband(ctx);
+    const tv = scoreTV(ctx);
+    const m  = scoreMobile(ctx);
+    const tb = scoreTablets(ctx);
+
+    // Render
+    renderList(bbNode, bb, "No Broadband recommendations yet — check inputs.");
+    renderList(tvNode, tvAskedEl.checked ? tv : [], tvAskedEl.checked ? "No TV recommendations yet — tick relevant TV triggers." : "Ask about TV to show recommendations.");
+    renderList(mobileNode, mobileAskedEl.checked ? m : [], mobileAskedEl.checked ? "No Mobile recommendations yet — tick relevant Mobile triggers." : "Ask about Mobile to show recommendations.");
+    renderList(tabNode, tb, "Tick a tablet trigger to see suggestions.");
+
+    // Final script
+    finalScript.value = buildFinalScript(bb, tv, m, tb);
+  });
+
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    // Clear radios
+    document.querySelectorAll('input[name="bbType"]').forEach(r=> r.checked=false);
+    fttcSpeedInput.value=''; fttcSpeedRow.hidden=true;
+
+    // Clear gates
+    tvAskedEl.checked=false;  tvBlock.hidden=true;
+    mobileAskedEl.checked=false; mobileBlock.hidden=true;
+
+    // Clear triggers
+    document.querySelectorAll("[data-trigger]").forEach(cb=> cb.checked=false);
+
+    // Clear outputs
+    bbNode.innerHTML = "";
+    tvNode.textContent = "Ask about TV to show recommendations.";
+    mobileNode.textContent = "Ask about Mobile to show recommendations.";
+    tabNode.textContent = "Tick a tablet trigger to see suggestions.";
+    finalScript.value="";
+  });
+
+  // Copy final script
+  document.getElementById("btnCopy").addEventListener("click", ()=>{
+    finalScript.select();
+    document.execCommand("copy");
+  });
+</script>
+``
 </body>
 
 </html>
+
