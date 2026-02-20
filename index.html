@@ -1,15 +1,191 @@
 <!doctype html>
-<html lang="en" class="theme-neutral">
+<html lang="en">
+
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Advisor Tool</title>
 
-  <!-- Correct CSS link -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- =======================
+       INLINE CSS (was style.css)
+       ======================= -->
+  <style>
+
+    body {
+      margin: 0;
+      background: #f7fafc;
+      color: #1f2937;
+      font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(90deg, rgba(14, 154, 167, .10), rgba(246, 215, 67, .10));
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .brand .sub {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media(max-width: 1000px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .step-banner {
+      margin: 6px 0 8px;
+      padding: 8px 12px;
+      border-left: 4px solid #0e9aa7;
+      background: rgba(14, 154, 167, .08);
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .coach {
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .between {
+      justify-content: space-between;
+    }
+
+    .options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    input[type=number] {
+      padding: 8px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      width: 160px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 6px;
+    }
+
+    .two-cols {
+      grid-template-columns: repeat(2, minmax(200px, 1fr));
+    }
+
+    @media(max-width: 720px) {
+      .two-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      background: #fff;
+      font-weight: 600;
+    }
+
+    .primary {
+      background: #0e9aa7;
+      border-color: #0e9aa7;
+      color: #fff;
+    }
+
+    .ghost {
+      background: #fff;
+    }
+
+    .script {
+      width: 100%;
+      min-height: 140px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-family: inherit;
+    }
+
+    .results .result {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(14, 154, 167, .18);
+      margin-left: 4px;
+    }
+
+  </style>
 </head>
 
-<body class="theme-neutral">
+<body>
+
+  <!-- HEADER -->
   <header class="app-header">
     <div class="brand">
       <h1>Advisor Tool</h1>
@@ -17,17 +193,23 @@
     </div>
   </header>
 
+
+  <!-- ============================
+       MAIN CONTENT
+       ============================ -->
   <main class="container">
     <section class="grid">
-      
-      <!-- LEFT SIDE INPUTS -->
+
+      <!-- LEFT PANEL (inputs) -->
       <div class="panel inputs">
 
-        <!-- STEP 1: Broadband -->
+        <!-- STEP 1 Broadband -->
         <div class="step-banner">Step 1 — Broadband (required)</div>
         <div class="card">
+
           <div class="coach">Ask: “How is the connection at busy times? Any buffering?”</div>
 
+          <!-- Connection Type -->
           <div class="row">
             <label>Connection Type</label>
             <div class="options">
@@ -37,11 +219,13 @@
             </div>
           </div>
 
-          <div class="row conditional" id="fttcSpeedRow" hidden>
+          <!-- FTTC speed -->
+          <div class="row" id="fttcSpeedRow" hidden>
             <label>FTTC Sync Speed (Mb/s)</label>
-            <input type="number" id="fttcSpeed" min="1" step="1" placeholder="e.g. 24">
+            <input type="number" id="fttcSpeed" placeholder="e.g. 24">
           </div>
 
+          <!-- BB triggers -->
           <div class="row">
             <label>Broadband Triggers</label>
             <div class="checklist two-cols">
@@ -51,25 +235,26 @@
               <label><input type="checkbox" data-trigger="bb_wfh"> WFH calls</label>
               <label><input type="checkbox" data-trigger="bb_uploads"> Heavy uploads</label>
               <label><input type="checkbox" data-trigger="bb_smarthome"> Smart home (10+)</label>
-              <label><input type="checkbox" data-trigger="bb_blackspots"> Wi‑Fi blackspots</label>
+              <label><input type="checkbox" data-trigger="bb_blackspots"> Wi-Fi blackspots</label>
               <label><input type="checkbox" data-trigger="bb_far_cab"> Far from cabinet</label>
             </div>
           </div>
+
         </div>
 
-        <!-- STEP 2: TV -->
+
+        <!-- STEP 2 TV -->
         <div class="step-banner">Step 2 — Ask About TV</div>
         <div class="card">
+
           <div class="coach">Ask: “Do you use Netflix / Sky / NOW?”</div>
-          <div class="row between must-ask-row">
+
+          <div class="row between">
             <label class="must-ask">⚠️ Confirm you asked about TV</label>
-            <label class="switch">
-              <input type="checkbox" id="tvAsked">
-              <span>I have asked about TV</span>
-            </label>
+            <label><input type="checkbox" id="tvAsked"> I have asked about TV</label>
           </div>
 
-          <div id="tvBlock" class="fade" hidden>
+          <div id="tvBlock" hidden>
             <div class="row">
               <label>TV Triggers</label>
               <div class="checklist two-cols">
@@ -83,21 +268,21 @@
               </div>
             </div>
           </div>
+
         </div>
 
-        <!-- STEP 3: Mobile -->
+        <!-- STEP 3 Mobile -->
         <div class="step-banner">Step 3 — Ask About Mobile</div>
         <div class="card">
-          <div class="coach">Ask: “Who’s your mobile with and how much do you pay?”</div>
-          <div class="row between must-ask-row">
+
+          <div class="coach">Ask: “Who’s your mobile with and what do you pay?”</div>
+
+          <div class="row between">
             <label class="must-ask">⚠️ Confirm you asked about Mobile</label>
-            <label class="switch">
-              <input type="checkbox" id="mobileAsked">
-              <span>I have asked about Mobile</span>
-            </label>
+            <label><input type="checkbox" id="mobileAsked"> I have asked about Mobile</label>
           </div>
 
-          <div id="mobileBlock" class="fade" hidden>
+          <div id="mobileBlock" hidden>
             <div class="row">
               <label>Mobile Triggers</label>
               <div class="checklist two-cols">
@@ -105,17 +290,19 @@
                 <label><input type="checkbox" data-trigger="m_mvno"> On MVNO</label>
                 <label><input type="checkbox" data-trigger="m_indoor"> Poor indoor signal</label>
                 <label><input type="checkbox" data-trigger="m_ooc"> Out of contract</label>
-                <label><input type="checkbox" data-trigger="m_one"> Wants all‑in‑one</label>
+                <label><input type="checkbox" data-trigger="m_one"> Wants one plan</label>
                 <label><input type="checkbox" data-trigger="m_family"> Family lines</label>
                 <label><input type="checkbox" data-trigger="m_android"> Android home</label>
                 <label><input type="checkbox" data-trigger="m_apple"> Apple home</label>
-                <label><input type="checkbox" data-trigger="m_lowdata"> Low data allowance</label>
+                <label><input type="checkbox" data-trigger="m_lowdata"> Low data</label>
               </div>
             </div>
           </div>
+
         </div>
 
-        <!-- STEP 4: Tablets -->
+
+        <!-- STEP 4 Tablets -->
         <div class="step-banner">Step 4 — Tablets</div>
         <div class="card">
           <div class="checklist two-cols">
@@ -127,45 +314,138 @@
           </div>
         </div>
 
+        <!-- actions -->
         <div class="row actions">
           <button id="btnEvaluate" class="btn primary">Evaluate Recommendations</button>
           <button id="btnReset" class="btn ghost">Reset</button>
         </div>
+
       </div>
 
-      <!-- RIGHT SIDE OUTPUTS -->
+
+      <!-- RIGHT PANEL (outputs) -->
       <div class="panel outputs">
+
         <div class="card">
           <h2>Broadband — Top 3</h2>
-          <div id="bbResults" class="results"></div>
+          <div id="bbResults"></div>
         </div>
 
         <div class="card">
           <h2>TV — Top 3</h2>
-          <div id="tvResults" class="results empty">Ask about TV to show recommendations.</div>
+          <div id="tvResults">Ask about TV to show recommendations.</div>
         </div>
 
         <div class="card">
           <h2>Mobile — Top 3</h2>
-          <div id="mobileResults" class="results empty">Ask about Mobile to show recommendations.</div>
+          <div id="mobileResults">Ask about Mobile to show recommendations.</div>
         </div>
 
         <div class="card">
           <h2>Tablets — Top 3</h2>
-          <div id="tabletResults" class="results empty">Tick a tablet trigger to see suggestions.</div>
+          <div id="tabletResults">Tick a tablet trigger to see suggestions.</div>
         </div>
 
         <div class="card">
           <h2>Final Script</h2>
-          <textarea id="finalScript" class="script" rows="10"></textarea>
+          <textarea id="finalScript" class="script"></textarea>
           <button id="btnCopy" class="btn secondary">Copy Final Script</button>
         </div>
+
       </div>
+
     </section>
   </main>
 
-  <!-- Correct JavaScript link -->
-  <script src="app.js"></script>
+
+
+
+  <!-- =======================
+       INLINE JAVASCRIPT HERE
+       ======================= -->
+  <script>
+
+    // show/hide TV block
+    document.getElementById("tvAsked").addEventListener("change", (e) => {
+      document.getElementById("tvBlock").hidden = !e.target.checked;
+    });
+
+    // show/hide Mobile block
+    document.getElementById("mobileAsked").addEventListener("change", (e) => {
+      document.getElementById("mobileBlock").hidden = !e.target.checked;
+    });
+
+    // show FTTC speed row
+    document.querySelectorAll('input[name="bbType"]').forEach((r) => {
+      r.addEventListener("change", () => {
+        document.getElementById("fttcSpeedRow").hidden = (r.value !== "FTTC");
+      });
+    });
+
+    // Get triggers
+    function getTriggers() {
+      const t = {};
+      document.querySelectorAll("[data-trigger]").forEach(cb => {
+        t[cb.dataset.trigger] = cb.checked;
+      });
+      return t;
+    }
+
+    // scoring example
+    function scoreBroadband(ctx) {
+      const { bbType, fttcSpeed, triggers } = ctx;
+      const out = [];
+
+      function add(name, score) {
+        out.push({ name, score });
+      }
+
+      if (bbType === "COPPER") return [{ name: "Mobile Broadband (4G/5G)", score: 999 }];
+
+      if (bbType === "FTTC" && fttcSpeed && Number(fttcSpeed) < 30)
+        return [{ name: "Mobile Broadband (4G/5G)", score: 999 }];
+
+      if (triggers.bb_4k) add("Full Fibre 500", 3);
+      if (triggers.bb_gaming) add("Full Fibre 300", 2);
+      if (triggers.bb_slow_evenings) add("Full Fibre 150", 1);
+
+      if (out.length === 0) add("Full Fibre 150", 1);
+
+      return out.sort((a, b) => b.score - a.score).slice(0, 3);
+    }
+
+    function render(list, node) {
+      node.innerHTML = "";
+      list.forEach((item) => {
+        node.innerHTML += `<div class='result'><strong>${item.name}</strong></div>`;
+      });
+    }
+
+    // evaluate handler
+    document.getElementById("btnEvaluate").addEventListener("click", () => {
+
+      const triggers = getTriggers();
+      const bbType = document.querySelector("input[name='bbType']:checked")?.value;
+
+      if (!bbType) {
+        alert("Select broadband type first");
+        return;
+      }
+
+      const fttcSpeed = document.getElementById("fttcSpeedRow").hidden ? null : document.getElementById("fttcSpeed").value;
+
+      const ctx = { bbType, fttcSpeed, triggers };
+
+      // broadband:
+      const bb = scoreBroadband(ctx);
+      render(bb, document.getElementById("bbResults"));
+
+      // TODO: You can add TV, Mobile, Tablet scoring functions here (like the BB one)
+      // For now they are blank until added
+    });
+
+  </script>
 
 </body>
+
 </html>
