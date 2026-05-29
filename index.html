@@ -1,631 +1,226 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Advisor Tool</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advisor Tool</title>
 
-  <!-- =======================
-       INLINE CSS (was style.css)
-       ======================= -->
-  <style>
+<style>
+body{margin:0;font-family:system-ui;background:#f7fafc}
+.container{max-width:1200px;margin:auto;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;padding:16px;border-radius:10px;border:1px solid #ddd;margin-bottom:16px}
+.step-banner{font-weight:700;margin-bottom:8px}
+.result{padding:8px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px}
+.result.best{border:2px solid #0e9aa7;background:#e6f7f8}
+textarea{width:100%;height:120px}
+.admin{background:#111;color:#fff;padding:10px;margin-bottom:10px}
+</style>
 
-    body {
-      margin: 0;
-      background: #f7fafc;
-      color: #1f2937;
-      font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
-
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      border-bottom: 1px solid #e5e7eb;
-      background: linear-gradient(90deg, rgba(14, 154, 167, .10), rgba(246, 215, 67, .10));
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .brand .sub {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 16px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    @media(max-width: 1000px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
-      margin-bottom: 16px;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .step-banner {
-      margin: 6px 0 8px;
-      padding: 8px 12px;
-      border-left: 4px solid #0e9aa7;
-      background: rgba(14, 154, 167, .08);
-      border-radius: 8px;
-      font-weight: 700;
-    }
-
-    .coach {
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin: 10px 0;
-      flex-wrap: wrap;
-    }
-
-    .between {
-      justify-content: space-between;
-    }
-
-    .options {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      border: 1px solid #e5e7eb;
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: #fff;
-      cursor: pointer;
-    }
-
-    input[type=number] {
-      padding: 8px 10px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      width: 160px;
-    }
-
-    .checklist {
-      display: grid;
-      gap: 6px;
-    }
-
-    .two-cols {
-      grid-template-columns: repeat(2, minmax(200px, 1fr));
-    }
-
-    @media(max-width: 720px) {
-      .two-cols {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .btn {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      cursor: pointer;
-      background: #fff;
-      font-weight: 600;
-    }
-
-    .primary {
-      background: #0e9aa7;
-      border-color: #0e9aa7;
-      color: #fff;
-    }
-
-    .ghost {
-      background: #fff;
-    }
-
-    .script {
-      width: 100%;
-      min-height: 140px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      font-family: inherit;
-    }
-
-    .results .result {
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px;
-      background: #fff;
-      margin-bottom: 8px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: rgba(14, 154, 167, .18);
-      margin-left: 4px;
-    }
-
-  </style>
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <header class="app-header">
-    <div class="brand">
-      <h1>Advisor Tool</h1>
-      <div class="sub">No customer data • Brand-neutral</div>
-    </div>
-  </header>
+<div class="container">
 
+<h1>Advisor Tool</h1>
 
-  <!-- ============================
-       MAIN CONTENT
-       ============================ -->
-  <main class="container">
-    <section class="grid">
+<!-- ADMIN MODE -->
+<div class="admin">
+<h3>Admin Edit Mode</h3>
+<textarea id="adminEditor"></textarea>
+<button onclick="saveConfig()">Save</button>
+</div>
 
-      <!-- LEFT PANEL (inputs) -->
-      <div class="panel inputs">
+<div class="grid">
 
-        <!-- STEP 1 Broadband -->
-        <div class="step-banner">Step 1 — Broadband (required)</div>
-        <div class="card">
+<!-- LEFT -->
+<div>
 
-          <div class="coach">Ask: “How is the connection at busy times? Any buffering?”</div>
+<div class="card">
+<div class="step-banner">Step 1 — Broadband</div>
+<label><input type="radio" name="bbType" value="FTTP"> Full Fibre</label>
+<label><input type="radio" name="bbType" value="FTTC"> FTTC</label>
+<label><input type="radio" name="bbType" value="COPPER"> Copper</label>
 
-          <!-- Connection Type -->
-          <div class="row">
-            <label>Connection Type</label>
-            <div class="options">
-              <label class="chip"><input type="radio" name="bbType" value="COPPER"> Copper</label>
-              <label class="chip"><input type="radio" name="bbType" value="FTTC"> FTTC</label>
-              <label class="chip"><input type="radio" name="bbType" value="FTTP"> Full Fibre</label>
-            </div>
-          </div>
+<input type="number" id="speed" placeholder="FTTC Speed">
 
-          <!-- FTTC speed -->
-          <div class="row" id="fttcSpeedRow" hidden>
-            <label>FTTC Sync Speed (Mb/s)</label>
-            <input type="number" id="fttcSpeed" placeholder="e.g. 24">
-          </div>
+<label><input type="checkbox" data-trigger="bb_4k"> 4K Streaming</label>
+<label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
+<label><input type="checkbox" data-trigger="bb_smarthome"> Smart Home</label>
+</div>
 
-          <!-- BB triggers -->
-          <div class="row">
-            <label>Broadband Triggers</label>
-            <div class="checklist two-cols">
-              <label><input type="checkbox" data-trigger="bb_slow_evenings"> Evening slowdowns</label>
-              <label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
-              <label><input type="checkbox" data-trigger="bb_4k"> 4K streaming</label>
-              <label><input type="checkbox" data-trigger="bb_wfh"> WFH calls</label>
-              <label><input type="checkbox" data-trigger="bb_uploads"> Heavy uploads</label>
-              <label><input type="checkbox" data-trigger="bb_smarthome"> Smart home (10+)</label>
-              <label><input type="checkbox" data-trigger="bb_blackspots"> Wi-Fi blackspots</label>
-              <label><input type="checkbox" data-trigger="bb_far_cab"> Far from cabinet</label>
-            </div>
-          </div>
+<div class="card">
+<div class="step-banner">Step 2 — TV</div>
+<label><input type="checkbox" data-trigger="tv_sports"> Sports</label>
+<label><input type="checkbox" data-trigger="tv_movies"> Movies</label>
+<label><input type="checkbox" data-trigger="tv_netflix"> Netflix</label>
+<label><input type="checkbox" data-trigger="tv_sky"> Sky</label>
+</div>
 
-        </div>
+<div class="card">
+<div class="step-banner">Step 3 — Mobile</div>
+<label><input type="checkbox" data-trigger="m_high_bill"> High Bill</label>
+<label><input type="checkbox" data-trigger="m_ooc"> Out of Contract</label>
+<label><input type="checkbox" data-trigger="m_apple"> Apple</label>
+<label><input type="checkbox" data-trigger="m_android"> Android</label>
+<label><input type="checkbox" data-trigger="m_family"> Family</label>
+</div>
 
+<div class="card">
+<div class="step-banner">Step 4 — Tablets</div>
+<label><input type="checkbox" data-trigger="t_stream"> Streams on phone</label>
+<label><input type="checkbox" data-trigger="t_apple"> Apple home</label>
+<label><input type="checkbox" data-trigger="t_android"> Android home</label>
+</div>
 
-        <!-- STEP 2 TV -->
-        <div class="step-banner">Step 2 — Ask About TV</div>
-        <div class="card">
+<div class="card">
+<div class="step-banner">Step 5 — Mobile Broadband</div>
+<label><input type="checkbox" data-trigger="mbb_slow"> Under 30Mb</label>
+<label><input type="checkbox" data-trigger="mbb_temp"> Temporary usage</label>
+<label><input type="checkbox" data-trigger="mbb_backup"> Backup internet</label>
+</div>
 
-          <div class="coach">Ask: “Do you use Netflix / Sky / NOW?”</div>
+<div class="card">
+<div class="step-banner">Step 6 — Watches</div>
+<label><input type="checkbox" data-trigger="w_apple"> Apple</label>
+<label><input type="checkbox" data-trigger="w_android"> Android</label>
+</div>
 
-          <div class="row between">
-            <label class="must-ask">⚠️ Confirm you asked about TV</label>
-            <label><input type="checkbox" id="tvAsked"> I have asked about TV</label>
-          </div>
+<button onclick="evaluate()">Evaluate</button>
 
-          <div id="tvBlock" hidden>
-            <div class="row">
-              <label>TV Triggers</label>
-              <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="tv_netflix"> Pays for Netflix</label>
-                <label><input type="checkbox" data-trigger="tv_sky"> Pays for Sky</label>
-                <label><input type="checkbox" data-trigger="tv_now"> Uses NOW</label>
-                <label><input type="checkbox" data-trigger="tv_sports"> Sports</label>
-                <label><input type="checkbox" data-trigger="tv_movies"> Movies</label>
-                <label><input type="checkbox" data-trigger="tv_apps"> Apps only</label>
-                <label><input type="checkbox" data-trigger="tv_allinone"> Wants all‑in‑one box</label>
-              </div>
-            </div>
-          </div>
+</div>
 
-        </div>
+<!-- RIGHT -->
+<div>
 
-        <!-- STEP 3 Mobile -->
-        <div class="step-banner">Step 3 — Ask About Mobile</div>
-        <div class="card">
+<div class="card"><h3>Broadband</h3><div id="bb"></div></div>
+<div class="card"><h3>TV</h3><div id="tv"></div></div>
+<div class="card"><h3>Mobile</h3><div id="mobile"></div></div>
+<div class="card"><h3>Tablets</h3><div id="tabs"></div></div>
+<div class="card"><h3>Mobile Broadband</h3><div id="mbb"></div></div>
+<div class="card"><h3>Watches</h3><div id="watch"></div></div>
 
-          <div class="coach">Ask: “Who’s your mobile with and what do you pay?”</div>
+<div class="card">
+<h3>Final Script</h3>
+<textarea id="script"></textarea>
+</div>
 
-          <div class="row between">
-            <label class="must-ask">⚠️ Confirm you asked about Mobile</label>
-            <label><input type="checkbox" id="mobileAsked"> I have asked about Mobile</label>
-          </div>
+</div>
 
-          <div id="mobileBlock" hidden>
-            <div class="row">
-              <label>Mobile Triggers</label>
-              <div class="checklist two-cols">
-                <label><input type="checkbox" data-trigger="m_high_bill"> High bill</label>
-                <label><input type="checkbox" data-trigger="m_mvno"> On MVNO</label>
-                <label><input type="checkbox" data-trigger="m_indoor"> Poor indoor signal</label>
-                <label><input type="checkbox" data-trigger="m_ooc"> Out of contract</label>
-                <label><input type="checkbox" data-trigger="m_one"> Wants one plan</label>
-                <label><input type="checkbox" data-trigger="m_family"> Family lines</label>
-                <label><input type="checkbox" data-trigger="m_android"> Android home</label>
-                <label><input type="checkbox" data-trigger="m_apple"> Apple home</label>
-                <label><input type="checkbox" data-trigger="m_lowdata"> Low data</label>
-              </div>
-            </div>
-          </div>
+</div>
 
-        </div>
+</div>
 
+<script>
 
-        <!-- STEP 4 Tablets -->
-        <div class="step-banner">Step 4 — Tablets</div>
-        <div class="card">
-          <div class="checklist two-cols">
-            <label><input type="checkbox" data-trigger="t_streams_on_phone"> Streams on phone</label>
-            <label><input type="checkbox" data-trigger="t_uses_laptop"> Uses laptop for TV</label>
-            <label><input type="checkbox" data-trigger="t_kids_screen"> Kids need screen</label>
-            <label><input type="checkbox" data-trigger="t_android_home"> Android home</label>
-            <label><input type="checkbox" data-trigger="t_apple_home"> Apple home</label>
-          </div>
-        </div>
+/* PRODUCTS CONFIG */
+const PRODUCTS = {
+  broadband: ["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Broadband"],
+  tv: ["Entertainment + Netflix","NOW Entertainment","Big Sport","Cinema","Full Works"],
+  mobile: ["No Frills","Essentials","All Rounder","Full Works","Device Upgrade"],
+  tablets: ["Samsung Tab","iPad","Honor Pad","Lenovo Tab"],
+  mbb: ["4G Hub","5G Hub","Smart 5G Hub"],
+  watches: ["Apple Watch","Samsung Watch","Pixel Watch"]
+};
 
-        <!-- actions -->
-        <div class="row actions">
-          <button id="btnEvaluate" class="btn primary">Evaluate Recommendations</button>
-          <button id="btnReset" class="btn ghost">Reset</button>
-        </div>
+/* LOAD ADMIN */
+document.getElementById("adminEditor").value = JSON.stringify(PRODUCTS, null, 2);
 
-      </div>
+function saveConfig(){
+  const data = JSON.parse(document.getElementById("adminEditor").value);
+  Object.assign(PRODUCTS, data);
+  alert("Updated ✅");
+}
 
+/* GET TRIGGERS */
+function triggers(){
+  const t={};
+  document.querySelectorAll("[data-trigger]").forEach(x=>t[x.dataset.trigger]=x.checked);
+  return t;
+}
 
-      <!-- RIGHT PANEL (outputs) -->
-      <div class="panel outputs">
-
-        <div class="card">
-          <h2>Broadband — Top 3</h2>
-          <div id="bbResults"></div>
-        </div>
-
-        <div class="card">
-          <h2>TV — Top 3</h2>
-          <div id="tvResults">Ask about TV to show recommendations.</div>
-        </div>
-
-        <div class="card">
-          <h2>Mobile — Top 3</h2>
-          <div id="mobileResults">Ask about Mobile to show recommendations.</div>
-        </div>
-
-        <div class="card">
-          <h2>Tablets — Top 3</h2>
-          <div id="tabletResults">Tick a tablet trigger to see suggestions.</div>
-        </div>
-
-        <div class="card">
-          <h2>Final Script</h2>
-          <textarea id="finalScript" class="script"></textarea>
-          <button id="btnCopy" class="btn secondary">Copy Final Script</button>
-        </div>
-
-      </div>
-
-    </section>
-  </main>
-
-
-
-
-  <!-- =======================
-       INLINE JAVASCRIPT HERE
-       ======================= -->
- <script>
-  /* ===============================
-     UI toggles / input bindings
-     =============================== */
-  const tvAskedEl = document.getElementById("tvAsked");
-  const tvBlock   = document.getElementById("tvBlock");
-  const mobileAskedEl = document.getElementById("mobileAsked");
-  const mobileBlock   = document.getElementById("mobileBlock");
-
-  const fttcSpeedRow  = document.getElementById("fttcSpeedRow");
-  const fttcSpeedInput= document.getElementById("fttcSpeed");
-
-  // Expand/collapse TV & Mobile sections when asked
-  tvAskedEl.addEventListener("change", (e)=> { tvBlock.hidden    = !e.target.checked; });
-  mobileAskedEl.addEventListener("change", (e)=> { mobileBlock.hidden = !e.target.checked; });
-
-  // Show FTTC speed box only when FTTC selected
-  document.querySelectorAll('input[name="bbType"]').forEach(r => {
-    r.addEventListener("change", ()=>{
-      fttcSpeedRow.hidden = r.value !== "FTTC" || !r.checked;
-    });
+/* RENDER */
+function render(id,list){
+  const node=document.getElementById(id);
+  node.innerHTML="";
+  list.forEach((x,i)=>{
+    node.innerHTML+=`<div class="result ${i===0?"best":""}">${x}</div>`
   });
+}
 
-  // Helpers to read inputs
-  function getBBType(){
-    return document.querySelector("input[name='bbType']:checked")?.value || null;
-  }
-  function getTriggers(){
-    const t = {};
-    document.querySelectorAll("[data-trigger]").forEach(cb => { t[cb.dataset.trigger] = cb.checked; });
-    return t;
-  }
+/* EVALUATE */
+function evaluate(){
 
-  /* ===============================
-     Scoring: Broadband (with overrides)
-     =============================== */
-  function scoreBroadband(ctx){
-    const { bbType, fttcSpeed, triggers } = ctx;
-    const out = [];
+  const t=triggers();
 
-    // Helper
-    const add = (name, why, pts)=> {
-      const hit = out.find(x=>x.name===name);
-      if(hit){ hit.score += pts; hit.why.push(why); }
-      else { out.push({ name, score: pts, why: [why] }); }
-    };
+  /* BROADBAND */
+  let bb=[];
+  if(t.bb_4k) bb.push(PRODUCTS.broadband[2]);
+  if(t.bb_gaming) bb.push(PRODUCTS.broadband[1]);
+  if(t.bb_smarthome) bb.push(PRODUCTS.broadband[3]);
+  if(!bb.length) bb.push(PRODUCTS.broadband[0]);
 
-    // Overrides
-    if (bbType === "COPPER") {
-      return [{ name:"Mobile Broadband (4G/5G)", score:999, why:["Copper line → bypass with 4G/5G"] }];
-    }
-    if (bbType === "FTTC" && fttcSpeed && Number(fttcSpeed) < 30){
-      return [{ name:"Mobile Broadband (4G/5G)", score:999, why:["FTTC sync < 30 Mb/s → MBB only"] }];
-    }
+  /* TV */
+  let tv=[];
+  if(t.tv_sports && t.tv_movies) tv.push(PRODUCTS.tv[4]);
+  else if(t.tv_sports) tv.push(PRODUCTS.tv[2]);
+  else if(t.tv_movies) tv.push(PRODUCTS.tv[3]);
+  if(t.tv_netflix) tv.push(PRODUCTS.tv[0]);
 
-    // Drivers
-    if (triggers.bb_4k)           add("Full Fibre 500",              "Multiple 4K streams",                 3);
-    if (triggers.bb_gaming)        add("Full Fibre 300",              "Gaming stability / latency",          2);
-    if (triggers.bb_wfh)           add("Full Fibre 500",              "WFH calls / stability",               2);
-    if (triggers.bb_uploads)       add("Full Fibre 900",              "Heavy uploads / backups",             2);
-    if (triggers.bb_smarthome)     add("Full Fibre 900",              "Smart home 10+ devices",              3);
-    if (triggers.bb_slow_evenings) add("Full Fibre 150",              "Evening slowdowns",                   2);
-    if (triggers.bb_far_cab)       add("Mobile Broadband (4G/5G)",    "Far from cabinet → line limits",      2);
-    if (triggers.bb_blackspots)    add("Premium Wi‑Fi / Mesh",        "Wi‑Fi blackspots at home",            3);
+  /* MOBILE */
+  let mob=[];
+  if(t.m_high_bill) mob.push(PRODUCTS.mobile[2]);
+  if(t.m_family) mob.push(PRODUCTS.mobile[1]);
+  if(t.m_ooc) mob.push(PRODUCTS.mobile[4]);
 
-    // Gentle default if nothing fired
-    if (out.length===0) {
-      if (bbType==="FTTP") add("Full Fibre 300", "General uplift on Full Fibre", 1);
-      else                 add("Full Fibre 150", "General uplift",               1);
-    }
+  /* TABLETS */
+  let tab=[];
+  if(t.t_apple) tab.push(PRODUCTS.tablets[1]);
+  if(t.t_android) tab.push(PRODUCTS.tablets[0]);
+  if(t.t_stream) tab.push(PRODUCTS.tablets[2]);
 
-    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  /* ✅ MBB (ALIGNED TO YOUR IMAGE) */
+  let mbb=[];
+
+  if(t.mbb_slow){
+    mbb.push("5G Smart Hub – best for low speed areas, stronger WiFi, handles many devices");
   }
 
-  /* ===============================
-     Scoring: TV (gated by asked)
-     =============================== */
-  function scoreTV(ctx){
-    const { tvAsked, triggers } = ctx;
-    if(!tvAsked) return [];
-
-    const out = [];
-    const add = (name, why, pts)=> {
-      const hit = out.find(x=>x.name===name);
-      if(hit){ hit.score += pts; hit.why.push(why); }
-      else { out.push({ name, score: pts, why: [why] }); }
-    };
-
-    if (triggers.tv_netflix)  add("Entertainment + Netflix", "Already paying Netflix → consolidate", 3);
-    if (triggers.tv_sky)      add("NOW Entertainment (via TV box)", "Pays Sky → NOW route",           3);
-    if (triggers.tv_now)      add("NOW Entertainment (via TV box)", "Already uses NOW",                2);
-    if (triggers.tv_sports)   add("Sports Pack",               "Watches sports",                       3);
-    if (triggers.tv_movies)   add("Cinema Pack",               "Watches movies",                       2);
-    if (triggers.tv_apps)     add("Core TV + Apps",            "App‑first viewing",                    2);
-    if (triggers.tv_allinone) add("Entertainment + Netflix",   "Wants all‑in‑one",                     1);
-
-    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  if(t.mbb_backup){
+    mbb.push("4G Hub – ideal backup connection for stability");
   }
 
-  /* ===============================
-     Scoring: Mobile (gated by asked)
-     =============================== */
-  function scoreMobile(ctx){
-    const { mobileAsked, triggers } = ctx;
-    if(!mobileAsked) return [];
-
-    const out = [];
-    const add = (name, why, pts)=> {
-      const hit = out.find(x=>x.name===name);
-      if(hit){ hit.score += pts; hit.why.push(why); }
-      else { out.push({ name, score: pts, why: [why] }); }
-    };
-
-    if (triggers.m_high_bill || triggers.m_one) add("One Plan (Unlimited)", "High bill / wants one‑plan", 3);
-    if (triggers.m_mvno)        add("All‑Rounder SIM",    "On MVNO → peak‑time slowdowns",             3);
-    if (triggers.m_indoor)      add("Wi‑Fi Calling SIM",  "Poor indoor signal → Wi‑Fi calling",        3);
-    if (triggers.m_ooc)         add("Handset Upgrade",    "Out of contract / tired device",            2);
-    if (triggers.m_family)      add("Family Add‑Lines",   "Family needs SIMs",                          2);
-    if (triggers.m_android)     add("All‑Rounder SIM",    "Android household",                          1);
-    if (triggers.m_apple)       add("Wi‑Fi Calling SIM",  "Apple household",                            1);
-    if (triggers.m_lowdata)     add("All‑Rounder SIM",    "Low data allowance",                         1);
-
-    return out.sort((a,b)=> b.score-a.score).slice(0,3);
+  if(t.mbb_temp){
+    mbb.push("Portable 4G/5G WiFi – temporary use like travel, caravans, remote work");
   }
 
-  /* ===============================
-     Scoring: Tablets (auto when any tablet trigger)
-     =============================== */
-  function scoreTablets(ctx){
-    const { triggers } = ctx;
-    const any = ["t_streams_on_phone","t_uses_laptop","t_kids_screen","t_android_home","t_apple_home"]
-      .some(k => !!triggers[k]);
-    if(!any) return [];
+  /* WATCH */
+  let watch=[];
+  if(t.w_apple) watch.push(PRODUCTS.watches[0]);
+  if(t.w_android) watch.push(PRODUCTS.watches[1]);
 
-    const out = [];
-    const add = (name, why, pts)=> {
-      const hit = out.find(x=>x.name===name);
-      if(hit){ hit.score += pts; hit.why.push(why); }
-      else { out.push({ name, score: pts, why: [why] }); }
-    };
+  render("bb",bb);
+  render("tv",tv);
+  render("mobile",mob);
+  render("tabs",tab);
+  render("mbb",mbb);
+  render("watch",watch);
 
-    if (triggers.t_android_home)    add("Android Tab — Samsung A9", "Android household", 3);
-    if (triggers.t_streams_on_phone)add("Honor X8a",                 "Streams on phone → offload", 2);
-    if (triggers.t_uses_laptop)     add("Lenovo Luna",               "Free up the laptop for work", 2);
-    if (triggers.t_kids_screen)     { add("Android Tab — Samsung A9","Kids shared screen",1); add("iPad (Entry)","Kids shared screen",1); }
-    if (triggers.t_apple_home)      add("iPad (Entry)",              "Apple household", 3);
+  document.getElementById("script").value =
+`Based on what you've told me:
 
-    return out.sort((a,b)=> b.score-a.score).slice(0,3);
-  }
+Broadband: ${bb[0]||""}
+TV: ${tv[0]||""}
+Mobile: ${mob[0]||""}
+Tablet: ${tab[0]||""}
+Mobile Broadband: ${mbb[0]||""}
+Watch: ${watch[0]||""}
 
-  /* ===============================
-     Rendering helpers
-     =============================== */
-  const bbNode     = document.getElementById("bbResults");
-  const tvNode     = document.getElementById("tvResults");
-  const mobileNode = document.getElementById("mobileResults");
-  const tabNode    = document.getElementById("tabletResults");
-  const finalScript= document.getElementById("finalScript");
+This matches your usage and gives the best overall value.`;
 
-  function renderList(node, list, emptyMsg){
-    node.innerHTML = "";
-    if(!list.length){
-      node.textContent = emptyMsg;
-      return;
-    }
-    list.forEach((r, i)=>{
-      const rank = i===0 ? "Best match" : i===1 ? "Strong alternative" : "Backup option";
-      const why  = r.why?.length ? ` <span style="color:#6b7280">(${r.why.join(" · ")})</span>` : "";
-      node.insertAdjacentHTML("beforeend", `<div class="result"><strong>${r.name}</strong><span class="badge">${rank}</span>${why}</div>`);
-    });
-  }
+}
 
-  function buildFinalScript(bb, tv, m, tb){
-    const lines = [];
-    if(bb[0]) lines.push(`Broadband — ${bb[0].name}: solves ${bb[0].why?.join(", ") || "your main pain points"}.`);
-    if(tv[0]) lines.push(`TV — ${tv[0].name}: fits because ${tv[0].why?.join(", ")}.`);
-    if(m[0])  lines.push(`Mobile — ${m[0].name}: addresses ${m[0].why?.join(", ")}.`);
-    if(tb[0]) lines.push(`Tablet — ${tb[0].name}: ${tb[0].why?.join(", ")}.`);
-
-    const alts = [];
-    if(bb[1]) alts.push(`BB alt: ${bb[1].name}`);
-    if(tv[1]) alts.push(`TV alt: ${tv[1].name}`);
-    if(m[1])  alts.push(`Mobile alt: ${m[1].name}`);
-    if(tb[1]) alts.push(`Tablet alt: ${tb[1].name}`);
-
-    const backs = [];
-    if(bb[2]) backs.push(`BB backup: ${bb[2].name}`);
-    if(tv[2]) backs.push(`TV backup: ${tv[2].name}`);
-    if(m[2])  backs.push(`Mobile backup: ${m[2].name}`);
-    if(tb[2]) backs.push(`Tablet backup: ${tb[2].name}`);
-
-    const intro = `Based on what you’ve told me, here’s what actually fits how you use things:`;
-    const core  = lines.map(l=>`• ${l}`).join("\n");
-    const altTx = alts.length ? `\n\nIf you want to compare alternatives:\n${alts.map(a=>`• ${a}`).join("\n")}` : "";
-    const bakTx = backs.length ? `\n\nIf you want something lighter as a backup:\n${backs.map(a=>`• ${a}`).join("\n")}` : "";
-    return `${intro}\n\n${core}${altTx}${bakTx}`;
-  }
-
-  /* ===============================
-     Evaluate & Reset
-     =============================== */
-  document.getElementById("btnEvaluate").addEventListener("click", ()=>{
-    const bbType = getBBType();
-    if(!bbType){
-      alert("Step 1 — Please select the Broadband connection type.");
-      return;
-    }
-
-    const fttcSpeed = (bbType==='FTTC' && !fttcSpeedRow.hidden) ? (fttcSpeedInput.value || null) : null;
-    const triggers  = getTriggers();
-
-    const ctx = {
-      bbType,
-      fttcSpeed,
-      tvAsked: tvAskedEl.checked,
-      mobileAsked: mobileAskedEl.checked,
-      triggers
-    };
-
-    // Score
-    const bb = scoreBroadband(ctx);
-    const tv = scoreTV(ctx);
-    const m  = scoreMobile(ctx);
-    const tb = scoreTablets(ctx);
-
-    // Render
-    renderList(bbNode, bb, "No Broadband recommendations yet — check inputs.");
-    renderList(tvNode, tvAskedEl.checked ? tv : [], tvAskedEl.checked ? "No TV recommendations yet — tick relevant TV triggers." : "Ask about TV to show recommendations.");
-    renderList(mobileNode, mobileAskedEl.checked ? m : [], mobileAskedEl.checked ? "No Mobile recommendations yet — tick relevant Mobile triggers." : "Ask about Mobile to show recommendations.");
-    renderList(tabNode, tb, "Tick a tablet trigger to see suggestions.");
-
-    // Final script
-    finalScript.value = buildFinalScript(bb, tv, m, tb);
-  });
-
-  document.getElementById("btnReset").addEventListener("click", ()=>{
-    // Clear radios
-    document.querySelectorAll('input[name="bbType"]').forEach(r=> r.checked=false);
-    fttcSpeedInput.value=''; fttcSpeedRow.hidden=true;
-
-    // Clear gates
-    tvAskedEl.checked=false;  tvBlock.hidden=true;
-    mobileAskedEl.checked=false; mobileBlock.hidden=true;
-
-    // Clear triggers
-    document.querySelectorAll("[data-trigger]").forEach(cb=> cb.checked=false);
-
-    // Clear outputs
-    bbNode.innerHTML = "";
-    tvNode.textContent = "Ask about TV to show recommendations.";
-    mobileNode.textContent = "Ask about Mobile to show recommendations.";
-    tabNode.textContent = "Tick a tablet trigger to see suggestions.";
-    finalScript.value="";
-  });
-
-  // Copy final script
-  document.getElementById("btnCopy").addEventListener("click", ()=>{
-    finalScript.select();
-    document.execCommand("copy");
-  });
 </script>
-``
+
 </body>
-
 </html>
-
