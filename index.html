@@ -14,7 +14,19 @@ body{margin:0;font-family:system-ui;background:#f7fafc}
 .result{padding:8px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px}
 .result.best{border:2px solid #0e9aa7;background:#e6f7f8}
 textarea{width:100%;height:120px}
-.admin{background:#111;color:#fff;padding:10px;margin-bottom:10px}
+
+/* ADMIN */
+.admin-panel{display:none;background:#111;color:#fff;padding:12px;margin-top:20px;border-radius:8px}
+.admin-toggle{
+ position:fixed;
+ bottom:10px;
+ right:10px;
+ font-size:12px;
+ cursor:pointer;
+ opacity:0.5;
+}
+.admin-toggle:hover{opacity:1}
+.warning{color:#b54708;font-weight:700}
 </style>
 
 </head>
@@ -24,13 +36,7 @@ textarea{width:100%;height:120px}
 
 <h1>Advisor Tool</h1>
 
-<!-- ADMIN MODE -->
-<div class="admin">
-<h3>Admin Edit Mode</h3>
-<textarea id="adminEditor"></textarea>
-<button onclick="saveConfig()">Save</button>
-</div>
-
+<!-- MAIN GRID -->
 <div class="grid">
 
 <!-- LEFT -->
@@ -38,15 +44,24 @@ textarea{width:100%;height:120px}
 
 <div class="card">
 <div class="step-banner">Step 1 — Broadband</div>
+
 <label><input type="radio" name="bbType" value="FTTP"> Full Fibre</label>
 <label><input type="radio" name="bbType" value="FTTC"> FTTC</label>
 <label><input type="radio" name="bbType" value="COPPER"> Copper</label>
 
-<input type="number" id="speed" placeholder="FTTC Speed">
+<br><br>
+
+<div class="warning">⚠️ Can customer get Full Fibre?</div>
+
+<label><input type="radio" name="ffAvailable" value="yes"> Yes</label>
+<label><input type="radio" name="ffAvailable" value="no"> No</label>
+
+<br><br>
 
 <label><input type="checkbox" data-trigger="bb_4k"> 4K Streaming</label>
 <label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
 <label><input type="checkbox" data-trigger="bb_smarthome"> Smart Home</label>
+
 </div>
 
 <div class="card">
@@ -75,9 +90,15 @@ textarea{width:100%;height:120px}
 
 <div class="card">
 <div class="step-banner">Step 5 — Mobile Broadband</div>
+
 <label><input type="checkbox" data-trigger="mbb_slow"> Under 30Mb</label>
-<label><input type="checkbox" data-trigger="mbb_temp"> Temporary usage</label>
+<label><input type="checkbox" data-trigger="mbb_temp"> Temporary use</label>
 <label><input type="checkbox" data-trigger="mbb_backup"> Backup internet</label>
+
+<div class="warning" style="margin-top:8px;">
+Only recommend if Full Fibre not available
+</div>
+
 </div>
 
 <div class="card">
@@ -109,30 +130,57 @@ textarea{width:100%;height:120px}
 
 </div>
 
+<!-- ADMIN TOGGLE -->
+<div class="admin-toggle" onclick="openAdmin()">⚙️ Admin</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+<h3>Admin Edit Mode</h3>
+<textarea id="adminEditor"></textarea><br>
+<button onclick="saveConfig()">Save Changes</button>
+</div>
+
 </div>
 
 <script>
 
+/* PASSWORD */
+const PASSWORD = "Tdtofb_316";
+
 /* PRODUCTS CONFIG */
 const PRODUCTS = {
-  broadband: ["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Broadband"],
-  tv: ["Entertainment + Netflix","NOW Entertainment","Big Sport","Cinema","Full Works"],
-  mobile: ["No Frills","Essentials","All Rounder","Full Works","Device Upgrade"],
-  tablets: ["Samsung Tab","iPad","Honor Pad","Lenovo Tab"],
-  mbb: ["4G Hub","5G Hub","Smart 5G Hub"],
-  watches: ["Apple Watch","Samsung Watch","Pixel Watch"]
+  broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Broadband"],
+  tv:["Entertainment + Netflix","NOW Entertainment","Big Sport","Cinema","Full Works"],
+  mobile:["No Frills","Essentials","All Rounder","Full Works","Device Upgrade"],
+  tablets:["Samsung Tab","iPad","Honor Pad","Lenovo Tab"],
+  watches:["Apple Watch","Samsung Watch"]
 };
 
-/* LOAD ADMIN */
-document.getElementById("adminEditor").value = JSON.stringify(PRODUCTS, null, 2);
-
-function saveConfig(){
-  const data = JSON.parse(document.getElementById("adminEditor").value);
-  Object.assign(PRODUCTS, data);
-  alert("Updated ✅");
+/* ADMIN ACCESS */
+function openAdmin(){
+  const input = prompt("Enter admin password:");
+  if(input === PASSWORD){
+    document.getElementById("adminPanel").style.display="block";
+    document.getElementById("adminEditor").value =
+      JSON.stringify(PRODUCTS,null,2);
+  } else {
+    alert("Incorrect password ❌");
+  }
 }
 
-/* GET TRIGGERS */
+function saveConfig(){
+  try{
+    const newData = JSON.parse(
+      document.getElementById("adminEditor").value
+    );
+    Object.assign(PRODUCTS,newData);
+    alert("Updated ✅");
+  } catch(e){
+    alert("Invalid format ❌");
+  }
+}
+
+/* TRIGGERS */
 function triggers(){
   const t={};
   document.querySelectorAll("[data-trigger]").forEach(x=>t[x.dataset.trigger]=x.checked);
@@ -144,57 +192,44 @@ function render(id,list){
   const node=document.getElementById(id);
   node.innerHTML="";
   list.forEach((x,i)=>{
-    node.innerHTML+=`<div class="result ${i===0?"best":""}">${x}</div>`
+    node.innerHTML += `<div class="result ${i===0?'best':''}">${x}</div>`;
   });
 }
 
-/* EVALUATE */
+/* MAIN EVALUATION */
 function evaluate(){
 
-  const t=triggers();
+  const t = triggers();
+  const ff = document.querySelector("input[name='ffAvailable']:checked")?.value;
 
-  /* BROADBAND */
-  let bb=[];
-  if(t.bb_4k) bb.push(PRODUCTS.broadband[2]);
-  if(t.bb_gaming) bb.push(PRODUCTS.broadband[1]);
-  if(t.bb_smarthome) bb.push(PRODUCTS.broadband[3]);
-  if(!bb.length) bb.push(PRODUCTS.broadband[0]);
+  let bb=[PRODUCTS.broadband[0]];
+  if(t.bb_4k) bb=[PRODUCTS.broadband[2]];
+  if(t.bb_smarthome) bb=[PRODUCTS.broadband[3]];
 
-  /* TV */
   let tv=[];
   if(t.tv_sports && t.tv_movies) tv.push(PRODUCTS.tv[4]);
   else if(t.tv_sports) tv.push(PRODUCTS.tv[2]);
   else if(t.tv_movies) tv.push(PRODUCTS.tv[3]);
   if(t.tv_netflix) tv.push(PRODUCTS.tv[0]);
 
-  /* MOBILE */
   let mob=[];
   if(t.m_high_bill) mob.push(PRODUCTS.mobile[2]);
   if(t.m_family) mob.push(PRODUCTS.mobile[1]);
   if(t.m_ooc) mob.push(PRODUCTS.mobile[4]);
 
-  /* TABLETS */
   let tab=[];
   if(t.t_apple) tab.push(PRODUCTS.tablets[1]);
   if(t.t_android) tab.push(PRODUCTS.tablets[0]);
   if(t.t_stream) tab.push(PRODUCTS.tablets[2]);
 
-  /* ✅ MBB (ALIGNED TO YOUR IMAGE) */
+  /* MBB LOGIC */
   let mbb=[];
-
-  if(t.mbb_slow){
-    mbb.push("5G Smart Hub – best for low speed areas, stronger WiFi, handles many devices");
+  if(ff === "no"){
+    if(t.mbb_slow) mbb.push("5G Smart Hub – best for low speeds");
+    if(t.mbb_backup) mbb.push("4G Hub – backup connection");
+    if(t.mbb_temp) mbb.push("Portable WiFi – travel/temporary");
   }
 
-  if(t.mbb_backup){
-    mbb.push("4G Hub – ideal backup connection for stability");
-  }
-
-  if(t.mbb_temp){
-    mbb.push("Portable 4G/5G WiFi – temporary use like travel, caravans, remote work");
-  }
-
-  /* WATCH */
   let watch=[];
   if(t.w_apple) watch.push(PRODUCTS.watches[0]);
   if(t.w_android) watch.push(PRODUCTS.watches[1]);
@@ -213,10 +248,10 @@ Broadband: ${bb[0]||""}
 TV: ${tv[0]||""}
 Mobile: ${mob[0]||""}
 Tablet: ${tab[0]||""}
-Mobile Broadband: ${mbb[0]||""}
+Mobile Broadband: ${mbb[0]||"Not required (Full Fibre available)"}
 Watch: ${watch[0]||""}
 
-This matches your usage and gives the best overall value.`;
+This is the best fit for your setup and usage.`;
 
 }
 
