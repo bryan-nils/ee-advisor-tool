@@ -107,7 +107,7 @@ Only recommend if Full Fibre not available
 <label><input type="checkbox" data-trigger="w_android"> Android</label>
 </div>
 
-<button onclick="evaluate()">Evaluate</button>
+<button onclick="runTool()">Evaluate</button>
 
 </div>
 
@@ -203,7 +203,7 @@ function render(id,list){
 }
 
 /* MAIN EVALUATION */
-function evaluate(){
+function runTool(){
 
   const t = triggers();
   const ffNode = document.querySelector("input[name='ffAvailable']:checked");
