@@ -147,16 +147,16 @@ Only recommend if Full Fibre not available
 /* PASSWORD */
 const PASSWORD = "Tdtofb_316";
 
-/* PRODUCTS CONFIG */
+/* PRODUCTS */
 const PRODUCTS = {
-  broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Broadband"],
-  tv:["Entertainment + Netflix","NOW Entertainment","Big Sport","Cinema","Full Works"],
+  broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Hub"],
+  tv:["Entertainment + Netflix","Big Sport","Cinema","Full Works"],
   mobile:["No Frills","Essentials","All Rounder","Full Works","Device Upgrade"],
-  tablets:["Samsung Tab","iPad","Honor Pad","Lenovo Tab"],
+  tablets:["Samsung Tab","iPad","Honor Pad"],
   watches:["Apple Watch","Samsung Watch"]
 };
 
-/* ADMIN ACCESS */
+/* ADMIN */
 function openAdmin(){
   const input = prompt("Enter admin password:");
   if(input === PASSWORD){
@@ -170,9 +170,7 @@ function openAdmin(){
 
 function saveConfig(){
   try{
-    const newData = JSON.parse(
-      document.getElementById("adminEditor").value
-    );
+    const newData = JSON.parse(document.getElementById("adminEditor").value);
     Object.assign(PRODUCTS,newData);
     alert("Updated ✅");
   } catch(e){
@@ -180,7 +178,7 @@ function saveConfig(){
   }
 }
 
-/* TRIGGERS */
+/* GET TRIGGERS */
 function triggers(){
   const t={};
   document.querySelectorAll("[data-trigger]").forEach(x=>t[x.dataset.trigger]=x.checked);
@@ -191,60 +189,118 @@ function triggers(){
 function render(id,list){
   const node=document.getElementById(id);
   node.innerHTML="";
-  
+
   if(list.length === 0){
     node.innerHTML = `<div class="result">No recommendation</div>`;
     return;
   }
 
   list.forEach((x,i)=>{
-    node.innerHTML += `<div class="result ${i===0?'best':''}">${x}</div>`;
+    node.innerHTML += `<div class="result ${i===0?'best':''}">
+      ${x}
+    </div>`;
   });
 }
 
-/* MAIN EVALUATION */
+/* MAIN LOGIC */
 function runTool(){
 
   const t = triggers();
   const ffNode = document.querySelector("input[name='ffAvailable']:checked");
   const ff = ffNode ? ffNode.value : null;
 
-  let bb=[PRODUCTS.broadband[0]];
+  /* -------------------- BROADBAND SCORING -------------------- */
+  let score = {150:0,300:0,500:0,900:0};
 
-  if(t.bb_smarthome){
-    bb=[PRODUCTS.broadband[3]];
-  } else if(t.bb_4k){
-    bb=[PRODUCTS.broadband[2]];
+  if(t.bb_slow) score[300]+=2;
+  if(t.bb_busy) score[900]+=2;
+  if(t.bb_work) score[500]+=2;
+  if(t.bb_4k) score[500]+=2;
+  if(t.bb_smarthome) score[900]+=3;
+  if(t.bb_gaming) score[500]+=2;
+
+  let bestSpeed = Object.keys(score).reduce((a,b)=> score[a]>score[b]?a:b);
+
+  let bb = ff === "no"
+    ? ["5G Hub ⚠️ Fibre unavailable"]
+    : [`Full Fibre ${bestSpeed}`];
+
+  /* -------------------- TV LOGIC -------------------- */
+  let tv = [];
+
+  if(t.tv_all || (t.tv_sport && t.tv_movies)){
+    tv.push("Full Works ✅ Best value bundle");
+  } else if(t.tv_sport){
+    tv.push("Big Sport");
+  } else if(t.tv_movies){
+    tv.push("Cinema");
   }
 
-  let tv=[];
-  if(t.tv_sports && t.tv_movies) tv.push(PRODUCTS.tv[4]);
-  else if(t.tv_sports) tv.push(PRODUCTS.tv[2]);
-  else if(t.tv_movies) tv.push(PRODUCTS.tv[3]);
-  if(t.tv_netflix) tv.push(PRODUCTS.tv[0]);
+  if(t.tv_netflix){
+    tv.push("Entertainment + Netflix");
+  }
 
-  let mob=[];
-  if(t.m_high_bill) mob.push(PRODUCTS.mobile[2]);
-  if(t.m_family) mob.push(PRODUCTS.mobile[1]);
-  if(t.m_ooc) mob.push(PRODUCTS.mobile[4]);
+  if(t.tv_subs){
+    tv.push("⚠️ Highlight consolidation savings");
+  }
 
-  let tab=[];
-  if(t.t_apple) tab.push(PRODUCTS.tablets[1]);
-  if(t.t_android) tab.push(PRODUCTS.tablets[0]);
-  if(t.t_stream) tab.push(PRODUCTS.tablets[2]);
+  /* -------------------- MOBILE LOGIC -------------------- */
+  let mob = [];
 
-  /* MBB LOGIC */
-  let mbb=[];
+  if(t.m_ooc && t.m_high){
+    mob.push("All Rounder ✅ Strong savings vs current plan");
+  } 
+  else if(t.m_ooc){
+    mob.push("SIM Only ✅ Easy win");
+  }
+
+  if(t.m_upgrade){
+    mob.push("Device Upgrade 📱");
+  }
+
+  if(t.m_family){
+    mob.push("Family Plan 👨‍👩‍👧‍👦");
+  }
+
+  if(t.m_travel){
+    mob.push("⚠️ Mention roaming benefits");
+  }
+
+  /* -------------------- TABLETS -------------------- */
+  let tab = [];
+
+  if(t.t_stream){
+    tab.push("Tablet ✅ Better viewing experience");
+  }
+
+  if(t.t_child){
+    tab.push("Family Tablet 👨‍👩‍👧");
+  }
+
+  if(t.t_apple){
+    tab.push("iPad");
+  }
+
+  if(t.t_android){
+    tab.push("Samsung Tab");
+  }
+
+  /* -------------------- MOBILE BROADBAND -------------------- */
+  let mbb = [];
+
   if(ff === "no"){
-    if(t.mbb_slow) mbb.push("5G Smart Hub – best for low speeds");
-    if(t.mbb_backup) mbb.push("4G Hub – backup connection");
-    if(t.mbb_temp) mbb.push("Portable WiFi – travel/temporary");
+    if(t.mbb_slow) mbb.push("5G Hub ✅ Best for speed issues");
+    if(t.mbb_backup) mbb.push("Backup 4G Hub");
+    if(t.mbb_temp) mbb.push("Portable WiFi");
   }
 
-  let watch=[];
-  if(t.w_apple) watch.push(PRODUCTS.watches[0]);
-  if(t.w_android) watch.push(PRODUCTS.watches[1]);
+  /* -------------------- WATCHES -------------------- */
+  let watch = [];
 
+  if(t.w_apple) watch.push("Apple Watch");
+  if(t.w_android) watch.push("Samsung Watch");
+
+  /* RENDER */
   render("bb",bb);
   render("tv",tv);
   render("mobile",mob);
@@ -252,18 +308,27 @@ function runTool(){
   render("mbb",mbb);
   render("watch",watch);
 
+  /* SCRIPT OUTPUT */
   document.getElementById("script").value =
-`Based on what you've told me:
+`Based on what you've told me, I'd recommend:
 
-Broadband: ${bb[0]||""}
-TV: ${tv[0]||""}
-Mobile: ${mob[0]||""}
-Tablet: ${tab[0]||""}
-Mobile Broadband: ${mbb[0]||"Not required (Full Fibre available)"}
-Watch: ${watch[0]||""}
+Broadband: ${bb[0]||"Not discussed"}
+TV: ${tv[0]||"Flexible option"}
+Mobile: ${mob[0]||"Right-sized plan"}
+Tablet: ${tab[0]||"Optional enhancement"}
+Mobile Broadband: ${mbb[0]||"Not required"}
+Watch: ${watch[0]||"Optional"}
 
-This is the best fit for your setup and usage.`;
+This setup fits how you actually use your services day-to-day and avoids paying for anything you don’t need.
+
+Does that sound like what you were looking for?`;
 
 }
 
+/* AUTO RUN */
+document.querySelectorAll("input").forEach(el=>{
+  el.addEventListener("change", runTool);
+});
+
 </script>
+``
