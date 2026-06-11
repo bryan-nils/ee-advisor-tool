@@ -58,42 +58,57 @@ textarea{width:100%;height:120px}
 
 <br><br>
 
-<label><input type="checkbox" data-trigger="bb_4k"> 4K Streaming</label>
+<label><input type="checkbox" data-trigger="bb_slow"> Slow speeds</label><br>
+<label><input type="checkbox" data-trigger="bb_busy"> Busy household</label><br>
+<label><input type="checkbox" data-trigger="bb_work"> Working from home</label><br>
+<label><input type="checkbox" data-trigger="bb_4k"> 4K streaming</label><br>
+<label><input type="checkbox" data-trigger="bb_smarthome"> Smart home devices</label><br>
 <label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
-<label><input type="checkbox" data-trigger="bb_smarthome"> Smart Home</label>
 
 </div>
+
 
 <div class="card">
 <div class="step-banner">Step 2 — TV</div>
-<label><input type="checkbox" data-trigger="tv_sports"> Sports</label>
-<label><input type="checkbox" data-trigger="tv_movies"> Movies</label>
-<label><input type="checkbox" data-trigger="tv_netflix"> Netflix</label>
-<label><input type="checkbox" data-trigger="tv_sky"> Sky</label>
+
+<label><input type="checkbox" data-trigger="tv_sport"> Live Sport</label><br>
+<label><input type="checkbox" data-trigger="tv_movies"> Movies</label><br>
+<label><input type="checkbox" data-trigger="tv_netflix"> Netflix</label><br>
+<label><input type="checkbox" data-trigger="tv_sky"> Sky content</label><br>
+<label><input type="checkbox" data-trigger="tv_all"> Wants everything</label><br>
+<label><input type="checkbox" data-trigger="tv_subs"> Multiple subscriptions</label>
+
 </div>
+
 
 <div class="card">
 <div class="step-banner">Step 3 — Mobile</div>
-<label><input type="checkbox" data-trigger="m_high_bill"> High Bill</label>
-<label><input type="checkbox" data-trigger="m_ooc"> Out of Contract</label>
-<label><input type="checkbox" data-trigger="m_apple"> Apple</label>
-<label><input type="checkbox" data-trigger="m_android"> Android</label>
-<label><input type="checkbox" data-trigger="m_family"> Family</label>
+
+<label><input type="checkbox" data-trigger="m_high"> Paying too much (>£30)</label><br>
+<label><input type="checkbox" data-trigger="m_ooc"> Out of contract</label><br>
+<label><input type="checkbox" data-trigger="m_upgrade"> Wants a new phone</label><br>
+<label><input type="checkbox" data-trigger="m_family"> Family / multiple lines</label>
+
 </div>
+
 
 <div class="card">
 <div class="step-banner">Step 4 — Tablets</div>
-<label><input type="checkbox" data-trigger="t_stream"> Streams on phone</label>
-<label><input type="checkbox" data-trigger="t_apple"> Apple home</label>
-<label><input type="checkbox" data-trigger="t_android"> Android home</label>
+
+<label><input type="checkbox" data-trigger="t_stream"> Watches content on phone</label><br>
+<label><input type="checkbox" data-trigger="t_child"> Family / child usage</label><br>
+<label><input type="checkbox" data-trigger="t_apple"> Apple household</label><br>
+<label><input type="checkbox" data-trigger="t_android"> Android household</label>
+
 </div>
+
 
 <div class="card">
 <div class="step-banner">Step 5 — Mobile Broadband</div>
 
-<label><input type="checkbox" data-trigger="mbb_slow"> Under 30Mb</label>
-<label><input type="checkbox" data-trigger="mbb_temp"> Temporary use</label>
-<label><input type="checkbox" data-trigger="mbb_backup"> Backup internet</label>
+<label><input type="checkbox" data-trigger="mbb_slow"> Speeds under 30Mb</label><br>
+<label><input type="checkbox" data-trigger="mbb_temp"> Temporary setup</label><br>
+<label><input type="checkbox" data-trigger="mbb_backup"> Backup connection</label>
 
 <div class="warning" style="margin-top:8px;">
 Only recommend if Full Fibre not available
@@ -101,11 +116,15 @@ Only recommend if Full Fibre not available
 
 </div>
 
+
 <div class="card">
 <div class="step-banner">Step 6 — Watches</div>
-<label><input type="checkbox" data-trigger="w_apple"> Apple</label>
+
+<label><input type="checkbox" data-trigger="w_apple"> Apple</label><br>
 <label><input type="checkbox" data-trigger="w_android"> Android</label>
+
 </div>
+
 
 <button onclick="runTool()">Evaluate</button>
 
@@ -150,11 +169,54 @@ const PASSWORD = "Tdtofb_316";
 /* PRODUCTS */
 const PRODUCTS = {
   broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Hub"],
-  tv:["Entertainment + Netflix","Big Sport","Cinema","Full Works"],
-  mobile:["No Frills","Essentials","All Rounder","Full Works","Device Upgrade"],
-  tablets:["Samsung Tab","iPad","Honor Pad"],
-  watches:["Apple Watch","Samsung Watch"]
-};
+
+  tv: [
+    {
+      name: "Entertainment",
+      price: "£22",
+      desc: "NOW Entertainment, HBO Max + Netflix (Ads)"
+    },
+    {
+      name: "Big Entertainment",
+      price: "£32",
+      desc: "NOW Entertainment + HBO Max + Cinema + Netflix"
+    },
+    {
+      name: "Sport",
+      price: "£25",
+      desc: "TNT Sports + UEFA + Premier League + UFC + 4K"
+    },
+    {
+      name: "Big Sport",
+      price: "£51",
+      desc: "TNT Sports + Sky Sports + 4K"
+    },
+    {
+      name: "Full Works",
+      price: "£88",
+      desc: "Sky Sports + Cinema + TNT + Netflix + HBO Max"
+    }
+  ],
+
+  mobile: [
+    {name:"No Frills Unlimited", price:"~£12", desc:"Basic low-cost plan"},
+    {name:"Essentials Unlimited", price:"~£15", desc:"Everyday usage + EU roaming"},
+    {name:"All Rounder Unlimited", price:"~£24", desc:"Includes TNT / Netflix / Xbox"},
+    {name:"Full Works Unlimited", price:"~£30", desc:"Premium plan with full benefits"}
+  ],
+
+  tablets:[
+  {name:"Samsung Tab", price:"", desc:""},
+  {name:"iPad", price:"", desc:""},
+  {name:"Honor Pad", price:"", desc:""}
+],
+
+watches:[
+  {name:"Apple Watch", price:"", desc:""},
+  {name:"Samsung Watch", price:"", desc:""}
+]
+``
+
 
 /* ADMIN */
 function openAdmin(){
@@ -197,7 +259,9 @@ function render(id,list){
 
   list.forEach((x,i)=>{
     node.innerHTML += `<div class="result ${i===0?'best':''}">
-      ${x}
+      <strong>${x.name}</strong>
+      ${x.price ? `<span style="color:#666;"> ${x.price}</span>` : ""}
+      <div style="font-size:12px;color:#666;">${x.desc || ""}</div>
     </div>`;
   });
 }
@@ -226,45 +290,90 @@ function runTool(){
     : [`Full Fibre ${bestSpeed}`];
 
   /* -------------------- TV LOGIC -------------------- */
-  let tv = [];
+let tv = [];
 
-  if(t.tv_all || (t.tv_sport && t.tv_movies)){
-    tv.push("Full Works ✅ Best value bundle");
-  } else if(t.tv_sport){
-    tv.push("Big Sport");
-  } else if(t.tv_movies){
-    tv.push("Cinema");
-  }
+// Full Works (top tier)
+if(t.tv_all || (t.tv_sport && t.tv_movies && t.tv_netflix)){
+  tv.push(PRODUCTS.tv.find(x=>x.name==="Full Works"));
+}
 
-  if(t.tv_netflix){
-    tv.push("Entertainment + Netflix");
-  }
+// Big Sport
+else if(t.tv_sport && t.tv_sky){
+  tv.push(PRODUCTS.tv.find(x=>x.name==="Big Sport"));
+}
 
-  if(t.tv_subs){
-    tv.push("⚠️ Highlight consolidation savings");
-  }
+// Sport only
+else if(t.tv_sport){
+  tv.push(PRODUCTS.tv.find(x=>x.name==="Sport"));
+}
+
+// Big Entertainment
+else if(t.tv_movies && t.tv_netflix){
+  tv.push(PRODUCTS.tv.find(x=>x.name==="Big Entertainment"));
+}
+
+// Base Entertainment
+else if(t.tv_netflix || t.tv_movies){
+  tv.push(PRODUCTS.tv.find(x=>x.name==="Entertainment"));
+}
+
+
+// --- Coaching flags ---
+if(t.tv_subs){
+  tv.push({
+    name:"⚠️ Consolidate subscriptions",
+    price:"",
+    desc:"Position savings vs multiple services"
+  });
+}
+
+if(t.tv_sport && !t.tv_movies){
+  tv.push({
+    name:"💡 Upsell opportunity",
+    price:"",
+    desc:"Check if they watch films → move to Full Works"
+  });
+}
 
   /* -------------------- MOBILE LOGIC -------------------- */
   let mob = [];
 
-  if(t.m_ooc && t.m_high){
-    mob.push("All Rounder ✅ Strong savings vs current plan");
-  } 
-  else if(t.m_ooc){
-    mob.push("SIM Only ✅ Easy win");
-  }
+// Strongest scenario
+if(t.m_ooc && t.m_high){
+  mob.push(PRODUCTS.mobile.find(x=>x.name.includes("All Rounder")));
+}
 
-  if(t.m_upgrade){
-    mob.push("Device Upgrade 📱");
-  }
+// Simple save
+else if(t.m_ooc){
+  mob.push(PRODUCTS.mobile.find(x=>x.name.includes("Essentials")));
+}
 
-  if(t.m_family){
-    mob.push("Family Plan 👨‍👩‍👧‍👦");
-  }
+// Premium trigger
+if(t.tv_sport || t.tv_movies){
+  mob.push({
+    name:"💡 Consider All Rounder",
+    price:"",
+    desc:"Can bundle entertainment benefits"
+  });
+}
 
-  if(t.m_travel){
-    mob.push("⚠️ Mention roaming benefits");
-  }
+// Upgrade opportunity
+if(t.m_upgrade){
+  mob.push({
+    name:"📱 Device Upgrade",
+    price:"",
+    desc:"Explore handset options"
+  });
+}
+
+// Family opportunity
+if(t.m_family){
+  mob.push({
+    name:"👨‍👩‍👧‍👦 Family discount",
+    price:"",
+    desc:"Multi-line saving opportunity"
+  });
+}
 
   /* -------------------- TABLETS -------------------- */
   let tab = [];
