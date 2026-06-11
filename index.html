@@ -171,52 +171,31 @@ const PRODUCTS = {
   broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Hub"],
 
   tv: [
-    {
-      name: "Entertainment",
-      price: "£22",
-      desc: "NOW Entertainment, HBO Max + Netflix (Ads)"
-    },
-    {
-      name: "Big Entertainment",
-      price: "£32",
-      desc: "NOW Entertainment + HBO Max + Cinema + Netflix"
-    },
-    {
-      name: "Sport",
-      price: "£25",
-      desc: "TNT Sports + UEFA + Premier League + UFC + 4K"
-    },
-    {
-      name: "Big Sport",
-      price: "£51",
-      desc: "TNT Sports + Sky Sports + 4K"
-    },
-    {
-      name: "Full Works",
-      price: "£88",
-      desc: "Sky Sports + Cinema + TNT + Netflix + HBO Max"
-    }
+    {name: "Entertainment", price: "£22", desc: "NOW Entertainment, HBO Max + Netflix (Ads)"},
+    {name: "Big Entertainment", price: "£32", desc: "NOW Entertainment + HBO Max + Cinema + Netflix"},
+    {name: "Sport", price: "£25", desc: "TNT Sports + UEFA + Premier League + 4K"},
+    {name: "Big Sport", price: "£51", desc: "TNT + Sky Sports + 4K"},
+    {name: "Full Works", price: "£88", desc: "Sky + Cinema + TNT + Netflix + HBO Max"}
   ],
 
   mobile: [
-    {name:"No Frills Unlimited", price:"~£12", desc:"Basic low-cost plan"},
-    {name:"Essentials Unlimited", price:"~£15", desc:"Everyday usage + EU roaming"},
-    {name:"All Rounder Unlimited", price:"~£24", desc:"Includes TNT / Netflix / Xbox"},
-    {name:"Full Works Unlimited", price:"~£30", desc:"Premium plan with full benefits"}
+    {name:"No Frills Unlimited", price:"~£12", desc:"Basic plan"},
+    {name:"Essentials Unlimited", price:"~£15", desc:"Everyday usage"},
+    {name:"All Rounder Unlimited", price:"~£24", desc:"Includes entertainment"},
+    {name:"Full Works Unlimited", price:"~£30", desc:"Premium plan"}
   ],
 
   tablets:[
-  {name:"Samsung Tab", price:"", desc:""},
-  {name:"iPad", price:"", desc:""},
-  {name:"Honor Pad", price:"", desc:""}
-],
+    {name:"Samsung Tab", price:"", desc:""},
+    {name:"iPad", price:"", desc:""},
+    {name:"Honor Pad", price:"", desc:""}
+  ],
 
-watches:[
-  {name:"Apple Watch", price:"", desc:""},
-  {name:"Samsung Watch", price:"", desc:""}
-]
-``
-
+  watches:[
+    {name:"Apple Watch", price:"", desc:""},
+    {name:"Samsung Watch", price:"", desc:""}
+  ]
+};
 
 /* ADMIN */
 function openAdmin(){
@@ -225,8 +204,6 @@ function openAdmin(){
     document.getElementById("adminPanel").style.display="block";
     document.getElementById("adminEditor").value =
       JSON.stringify(PRODUCTS,null,2);
-  } else {
-    alert("Incorrect password ❌");
   }
 }
 
@@ -240,7 +217,7 @@ function saveConfig(){
   }
 }
 
-/* GET TRIGGERS */
+/* TRIGGERS */
 function triggers(){
   const t={};
   document.querySelectorAll("[data-trigger]").forEach(x=>t[x.dataset.trigger]=x.checked);
@@ -266,148 +243,74 @@ function render(id,list){
   });
 }
 
-/* MAIN LOGIC */
+/* MAIN */
 function runTool(){
 
   const t = triggers();
   const ffNode = document.querySelector("input[name='ffAvailable']:checked");
   const ff = ffNode ? ffNode.value : null;
 
-  /* -------------------- BROADBAND SCORING -------------------- */
-  let score = {150:0,300:0,500:0,900:0};
-
-  if(t.bb_slow) score[300]+=2;
-  if(t.bb_busy) score[900]+=2;
-  if(t.bb_work) score[500]+=2;
-  if(t.bb_4k) score[500]+=2;
-  if(t.bb_smarthome) score[900]+=3;
-  if(t.bb_gaming) score[500]+=2;
-
-  let bestSpeed = Object.keys(score).reduce((a,b)=> score[a]>score[b]?a:b);
-
-  let bb = ff === "no"
-    ? ["5G Hub ⚠️ Fibre unavailable"]
-    : [`Full Fibre ${bestSpeed}`];
-
-  /* -------------------- TV LOGIC -------------------- */
-let tv = [];
-
-// Full Works (top tier)
-if(t.tv_all || (t.tv_sport && t.tv_movies && t.tv_netflix)){
-  tv.push(PRODUCTS.tv.find(x=>x.name==="Full Works"));
-}
-
-// Big Sport
-else if(t.tv_sport && t.tv_sky){
-  tv.push(PRODUCTS.tv.find(x=>x.name==="Big Sport"));
-}
-
-// Sport only
-else if(t.tv_sport){
-  tv.push(PRODUCTS.tv.find(x=>x.name==="Sport"));
-}
-
-// Big Entertainment
-else if(t.tv_movies && t.tv_netflix){
-  tv.push(PRODUCTS.tv.find(x=>x.name==="Big Entertainment"));
-}
-
-// Base Entertainment
-else if(t.tv_netflix || t.tv_movies){
-  tv.push(PRODUCTS.tv.find(x=>x.name==="Entertainment"));
-}
-
-
-// --- Coaching flags ---
-if(t.tv_subs){
-  tv.push({
-    name:"⚠️ Consolidate subscriptions",
-    price:"",
-    desc:"Position savings vs multiple services"
-  });
-}
-
-if(t.tv_sport && !t.tv_movies){
-  tv.push({
-    name:"💡 Upsell opportunity",
-    price:"",
-    desc:"Check if they watch films → move to Full Works"
-  });
-}
-
-  /* -------------------- MOBILE LOGIC -------------------- */
-  let mob = [];
-
-// Strongest scenario
-if(t.m_ooc && t.m_high){
-  mob.push(PRODUCTS.mobile.find(x=>x.name.includes("All Rounder")));
-}
-
-// Simple save
-else if(t.m_ooc){
-  mob.push(PRODUCTS.mobile.find(x=>x.name.includes("Essentials")));
-}
-
-// Premium trigger
-if(t.tv_sport || t.tv_movies){
-  mob.push({
-    name:"💡 Consider All Rounder",
-    price:"",
-    desc:"Can bundle entertainment benefits"
-  });
-}
-
-// Upgrade opportunity
-if(t.m_upgrade){
-  mob.push({
-    name:"📱 Device Upgrade",
-    price:"",
-    desc:"Explore handset options"
-  });
-}
-
-// Family opportunity
-if(t.m_family){
-  mob.push({
-    name:"👨‍👩‍👧‍👦 Family discount",
-    price:"",
-    desc:"Multi-line saving opportunity"
-  });
-}
-
-  /* -------------------- TABLETS -------------------- */
-  let tab = [];
-
-  if(t.t_stream){
-    tab.push("Tablet ✅ Better viewing experience");
-  }
-
-  if(t.t_child){
-    tab.push("Family Tablet 👨‍👩‍👧");
-  }
-
-  if(t.t_apple){
-    tab.push("iPad");
-  }
-
-  if(t.t_android){
-    tab.push("Samsung Tab");
-  }
-
-  /* -------------------- MOBILE BROADBAND -------------------- */
-  let mbb = [];
+  /* BROADBAND */
+  let bb = [];
 
   if(ff === "no"){
-    if(t.mbb_slow) mbb.push("5G Hub ✅ Best for speed issues");
-    if(t.mbb_backup) mbb.push("Backup 4G Hub");
-    if(t.mbb_temp) mbb.push("Portable WiFi");
+    bb.push({name:"5G Hub", price:"", desc:"Fibre unavailable"});
+  } else {
+    if(t.bb_smarthome || t.bb_busy){
+      bb.push({name:"Full Fibre 900"});
+    } else if(t.bb_4k || t.bb_work){
+      bb.push({name:"Full Fibre 500"});
+    } else {
+      bb.push({name:"Full Fibre 300"});
+    }
   }
 
-  /* -------------------- WATCHES -------------------- */
+  /* TV */
+  let tv = [];
+
+  if(t.tv_all || (t.tv_sport && t.tv_movies && t.tv_netflix)){
+    tv.push(PRODUCTS.tv.find(x=>x.name==="Full Works"));
+  } else if(t.tv_sport && t.tv_sky){
+    tv.push(PRODUCTS.tv.find(x=>x.name==="Big Sport"));
+  } else if(t.tv_sport){
+    tv.push(PRODUCTS.tv.find(x=>x.name==="Sport"));
+  } else if(t.tv_movies && t.tv_netflix){
+    tv.push(PRODUCTS.tv.find(x=>x.name==="Big Entertainment"));
+  } else if(t.tv_movies || t.tv_netflix){
+    tv.push(PRODUCTS.tv.find(x=>x.name==="Entertainment"));
+  }
+
+  /* MOBILE */
+  let mob = [];
+
+  if(t.m_ooc && t.m_high){
+    mob.push(PRODUCTS.mobile[2]);
+  } else if(t.m_ooc){
+    mob.push(PRODUCTS.mobile[1]);
+  }
+
+  if(t.m_upgrade){
+    mob.push({name:"Device Upgrade", desc:"Explore handset options"});
+  }
+
+  /* TABLET */
+  let tab = [];
+
+  if(t.t_apple) tab.push({name:"iPad"});
+  if(t.t_android) tab.push({name:"Samsung Tab"});
+
+  /* MBB */
+  let mbb = [];
+
+  if(ff === "no" && t.mbb_slow){
+    mbb.push({name:"5G Hub", desc:"Best for speed issues"});
+  }
+
+  /* WATCH */
   let watch = [];
 
-  if(t.w_apple) watch.push("Apple Watch");
-  if(t.w_android) watch.push("Samsung Watch");
+  if(t.w_apple) watch.push({name:"Apple Watch"});
+  if(t.w_android) watch.push({name:"Samsung Watch"});
 
   /* RENDER */
   render("bb",bb);
@@ -417,21 +320,17 @@ if(t.m_family){
   render("mbb",mbb);
   render("watch",watch);
 
-  /* SCRIPT OUTPUT */
   document.getElementById("script").value =
-`Based on what you've told me, I'd recommend:
+`Based on what you've told me:
 
-Broadband: ${bb[0]||"Not discussed"}
-TV: ${tv[0]||"Flexible option"}
-Mobile: ${mob[0]||"Right-sized plan"}
-Tablet: ${tab[0]||"Optional enhancement"}
-Mobile Broadband: ${mbb[0]||"Not required"}
-Watch: ${watch[0]||"Optional"}
+Broadband: ${bb[0]?.name || ""}
+TV: ${tv[0]?.name || ""}
+Mobile: ${mob[0]?.name || ""}
+Tablet: ${tab[0]?.name || ""}
+Mobile Broadband: ${mbb[0]?.name || ""}
+Watch: ${watch[0]?.name || ""}
 
-This setup fits how you actually use your services day-to-day and avoids paying for anything you don’t need.
-
-Does that sound like what you were looking for?`;
-
+Does that sound right?`;
 }
 
 /* AUTO RUN */
@@ -440,4 +339,3 @@ document.querySelectorAll("input").forEach(el=>{
 });
 
 </script>
-``
