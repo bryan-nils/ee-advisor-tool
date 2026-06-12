@@ -59,11 +59,15 @@ textarea{width:100%;height:120px}
 <br><br>
 
 <label><input type="checkbox" data-trigger="bb_slow"> Slow speeds</label><br>
-<label><input type="checkbox" data-trigger="bb_busy"> Busy household</label><br>
+<label><input type="checkbox" data-trigger="bb_busy"> Busy household / multiple users</label><br>
 <label><input type="checkbox" data-trigger="bb_work"> Working from home</label><br>
-<label><input type="checkbox" data-trigger="bb_4k"> 4K streaming</label><br>
-<label><input type="checkbox" data-trigger="bb_smarthome"> Smart home devices</label><br>
-<label><input type="checkbox" data-trigger="bb_gaming"> Gaming</label>
+<label><input type="checkbox" data-trigger="bb_4k"> Streams in 4K / UHD</label><br>
+
+<br>
+
+<label><input type="checkbox" data-trigger="bb_coverage"> Poor coverage around the home</label><br>
+<label><input type="checkbox" data-trigger="bb_dropout"> Broadband dropouts / instability</label><br>
+<label><input type="checkbox" data-trigger="bb_wifioptimiser"> Wants better WiFi performance</label><br>
 
 </div>
 
@@ -250,20 +254,82 @@ function runTool(){
   const ffNode = document.querySelector("input[name='ffAvailable']:checked");
   const ff = ffNode ? ffNode.value : null;
 
-  /* BROADBAND */
-  let bb = [];
+/* BROADBAND */
+let bb = [];
 
-  if(ff === "no"){
-    bb.push({name:"5G Hub", price:"", desc:"Fibre unavailable"});
-  } else {
-    if(t.bb_smarthome || t.bb_busy){
-      bb.push({name:"Full Fibre 900"});
-    } else if(t.bb_4k || t.bb_work){
-      bb.push({name:"Full Fibre 500"});
-    } else {
-      bb.push({name:"Full Fibre 300"});
-    }
+/* NO FIBRE */
+if(ff === "no"){
+  bb.push({name:"5G Hub", desc:"Fibre unavailable"});
+}
+
+/* FIBRE AVAILABLE */
+else {
+
+  /* -------- SPEED LOGIC (THIS IS THE BIT YOU ASKED FOR) -------- */
+
+  let speed = "Full Fibre 300"; // default
+
+  if(t.bb_busy){
+    speed = "Full Fibre 900";
   }
+  else if(t.bb_4k || t.bb_work){
+    speed = "Full Fibre 500";
+  }
+  else if(t.bb_slow){
+    speed = "Full Fibre 300";
+  }
+
+  // Push main broadband recommendation
+  bb.push({name: speed});
+
+
+  /* -------- EE PACKAGE LOGIC -------- */
+
+  let packageTier = "Core";
+
+  if(t.bb_busy && t.bb_work){
+    packageTier = "Ultimate";
+  }
+  else if(t.bb_work || t.bb_4k){
+    packageTier = "Premium";
+  }
+  else if(t.bb_slow){
+    packageTier = "Standard";
+  }
+
+  // Add package ABOVE speed
+  bb.unshift({
+    name: `${packageTier} Package`,
+    desc: "Recommended based on usage"
+  });
+
+
+  /* -------- ADD-ONS / FIXES -------- */
+
+  if(t.bb_coverage){
+    bb.push({
+      name:"📶 WiFi Extenders",
+      desc:"Fixes poor coverage in the home"
+    });
+  }
+
+  if(t.bb_dropout){
+    bb.push({
+      name:"🟡 4G Backup",
+      desc:"Keeps connection running during outages"
+    });
+  }
+
+  if(t.bb_wifioptimiser || t.bb_work){
+    bb.push({
+      name:"⚡ WiFi Optimiser",
+      desc:"Improves stability and performance"
+    });
+  }
+
+}
+
+
 
   /* TV */
   let tv = [];
