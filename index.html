@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advisor Assistant</title>
 
-<link rel="stylesheet" href="style.css">
+style.css">
 
 </head>
 
@@ -22,7 +22,7 @@
 
 <div class="grid">
 
-<!-- LEFT SIDE -->
+<!-- LEFT -->
 <div>
 
 <!-- BROADBAND -->
@@ -36,6 +36,13 @@
 
 <br><br>
 
+<strong>Current Speed</strong><br>
+<label><input type="radio" name="bb_speed" value="low"> Under 30Mbps</label><br>
+<label><input type="radio" name="bb_speed" value="mid"> 30–100Mbps</label><br>
+<label><input type="radio" name="bb_speed" value="high"> 100Mbps+</label>
+
+<br><br>
+
 <label><input type="checkbox" data-trigger="bb_slow"> Buffering / slow speeds</label><br>
 <label><input type="checkbox" data-trigger="bb_busy"> Busy household</label><br>
 <label><input type="checkbox" data-trigger="bb_work"> Working from home</label><br>
@@ -44,7 +51,7 @@
 <br>
 
 <label><input type="checkbox" data-trigger="bb_coverage"> WiFi doesn’t reach rooms</label><br>
-<label><input type="checkbox" data-trigger="bb_dropout"> Drops out</label><br>
+<label><input type="checkbox" data-trigger="bb_dropout"> Drops out</label>
 </div>
 
 <!-- TV -->
@@ -104,7 +111,7 @@
 
 </div>
 
-<!-- RIGHT SIDE -->
+<!-- RIGHT -->
 <div>
 
 <div class="card"><h3>🧠 Live Prompts</h3><div id="prompts"></div></div>
@@ -128,18 +135,15 @@
 
 <script>
 
-/* TRIGGERS */
 function triggers(){
   const t={};
   document.querySelectorAll("[data-trigger]").forEach(x=>t[x.dataset.trigger]=x.checked);
   return t;
 }
 
-/* RENDER */
 function render(id,list){
   const node=document.getElementById(id);
   node.innerHTML="";
-
   if(!list || list.length===0){
     node.innerHTML=`<div class="result">None</div>`;
     return;
@@ -151,25 +155,23 @@ function render(id,list){
     else if(i===0) cls+=" best";
 
     node.innerHTML+=`
-    <div class="${cls}">
-      <strong>${x.name}</strong>
-      ${x.desc?`<div>${x.desc}</div>`:""}
-    </div>`;
+      <div class="${cls}">
+        <strong>${x.name}</strong>
+        ${x.desc?`<div>${x.desc}</div>`:""}
+      </div>`;
   });
 }
 
-/* MAIN */
 function runTool(){
 
 const t=triggers();
 const ff=document.querySelector("input[name='ffAvailable']:checked")?.value;
+const speedInput=document.querySelector("input[name='bb_speed']:checked")?.value;
 
-/* TRACK DISCOVERY */
+/* DISCOVERY FLAGS */
 const askedTV = t.tv_sport||t.tv_movies||t.tv_netflix||t.tv_sky||t.tv_all;
-
 const provider=document.querySelector("input[name='m_provider']:checked")?.value;
 const spend=document.querySelector("input[name='m_spend']:checked")?.value;
-
 const askedMobile = provider||spend||t.m_coverage||t.m_unlimited||t.m_roaming||t.m_family;
 
 /* BROADBAND */
@@ -178,14 +180,16 @@ if(!ff){
   bb.push({name:"⚠️ Confirm fibre availability"});
 }
 else if(ff==="no"){
-  bb.push({name:"5G Hub",desc:"Fibre unavailable"});
+  if(speedInput==="low"){
+    bb.push({name:"5G Hub",desc:"Speeds under 30Mbps"});
+  } else {
+    bb.push({name:"Broadband optimisation",desc:"Improve existing setup"});
+  }
 }
 else{
   if(t.bb_busy) bb.push({name:"Full Fibre 900"});
   else if(t.bb_4k||t.bb_work) bb.push({name:"Full Fibre 500"});
   else bb.push({name:"Full Fibre 300"});
-
-  if(t.bb_coverage) bb.push({name:"WiFi Extenders"});
 }
 
 /* TV */
@@ -229,15 +233,15 @@ if(t.w_active) watch.push({name:"Fitness Watch"});
 if(t.w_health) watch.push({name:"Health Watch"});
 if(t.w_elderly) watch.push({name:"Safety Watch",desc:"Fall detection"});
 
-/* LIVE PROMPTS */
+/* PROMPTS */
 let prompts=[];
 if(!ff) prompts.push({name:"Confirm fibre availability"});
+if(!speedInput) prompts.push({name:"Ask current speed"});
 if(!askedTV) prompts.push({name:"Ask what they watch"});
 if(!askedMobile) prompts.push({name:"Ask about provider & spend"});
-if(t.tv_netflix && !t.t_stream) prompts.push({name:"They stream — mention tablet"});
 render("prompts",prompts);
 
-/* MISSED OPPORTUNITIES */
+/* GAPS */
 let gaps=[];
 if(ff==="yes" && !askedTV) gaps.push({name:"TV not explored"});
 if(!askedMobile) gaps.push({name:"Mobile not discussed"});
@@ -263,7 +267,6 @@ Does that sound right?`;
 
 }
 
-/* AUTO RUN */
 document.querySelectorAll("input").forEach(el=>{
   el.addEventListener("change", runTool);
 });
