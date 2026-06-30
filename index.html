@@ -3,146 +3,118 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Advisor Tool</title>
+<title>Advisor Assistant</title>
 
-<style>
-body{margin:0;font-family:system-ui;background:#f7fafc}
-.container{max-width:1200px;margin:auto;padding:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:#fff;padding:16px;border-radius:10px;border:1px solid #ddd;margin-bottom:16px}
-.step-banner{font-weight:700;margin-bottom:8px}
-.result{padding:8px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px}
-.result.best{border:2px solid #0e9aa7;background:#e6f7f8}
-textarea{width:100%;height:120px}
-
-/* ADMIN */
-.admin-panel{display:none;background:#111;color:#fff;padding:12px;margin-top:20px;border-radius:8px}
-.admin-toggle{
- position:fixed;
- bottom:10px;
- right:10px;
- font-size:12px;
- cursor:pointer;
- opacity:0.5;
-}
-.admin-toggle:hover{opacity:1}
-.warning{color:#b54708;font-weight:700}
-</style>
+<link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
 
 <div class="container">
 
-<h1>Advisor Tool</h1>
+<div style="margin-bottom:20px;">
+  <h1>Advisor Assistant</h1>
+  <div style="color:#6b7280;font-size:13px;">
+    Guided discovery and recommendations
+  </div>
+</div>
 
-<!-- MAIN GRID -->
 <div class="grid">
 
-<!-- LEFT -->
+<!-- LEFT SIDE -->
 <div>
 
+<!-- BROADBAND -->
 <div class="card">
-<div class="step-banner">Step 1 — Broadband</div>
+<div class="step-banner">📶 Broadband</div>
 
-<label><input type="radio" name="bbType" value="FTTP"> Full Fibre</label>
-<label><input type="radio" name="bbType" value="FTTC"> FTTC</label>
-<label><input type="radio" name="bbType" value="COPPER"> Copper</label>
+<div class="warning">⚠️ Confirm Full Fibre availability</div>
 
-<br><br>
-
-<div class="warning">⚠️ Can customer get Full Fibre?</div>
-
-<label><input type="radio" name="ffAvailable" value="yes"> Yes</label>
-<label><input type="radio" name="ffAvailable" value="no"> No</label>
+<label><input type="radio" name="ffAvailable" value="yes"> Full Fibre Available</label>
+<label><input type="radio" name="ffAvailable" value="no"> Not Available</label>
 
 <br><br>
 
-<label><input type="checkbox" data-trigger="bb_slow"> Slow speeds</label><br>
-<label><input type="checkbox" data-trigger="bb_busy"> Busy household / multiple users</label><br>
+<label><input type="checkbox" data-trigger="bb_slow"> Buffering / slow speeds</label><br>
+<label><input type="checkbox" data-trigger="bb_busy"> Busy household</label><br>
 <label><input type="checkbox" data-trigger="bb_work"> Working from home</label><br>
-<label><input type="checkbox" data-trigger="bb_4k"> Streams in 4K / UHD</label><br>
+<label><input type="checkbox" data-trigger="bb_4k"> Streams in 4K</label><br>
 
 <br>
 
-<label><input type="checkbox" data-trigger="bb_coverage"> Poor coverage around the home</label><br>
-<label><input type="checkbox" data-trigger="bb_dropout"> Broadband dropouts / instability</label><br>
-<label><input type="checkbox" data-trigger="bb_wifioptimiser"> Wants better WiFi performance</label><br>
-
+<label><input type="checkbox" data-trigger="bb_coverage"> WiFi doesn’t reach rooms</label><br>
+<label><input type="checkbox" data-trigger="bb_dropout"> Drops out</label><br>
 </div>
 
-
+<!-- TV -->
 <div class="card">
-<div class="step-banner">Step 2 — TV</div>
+<div class="step-banner">📺 TV (Must Ask)</div>
 
-<label><input type="checkbox" data-trigger="tv_sport"> Live Sport</label><br>
+<label><input type="checkbox" data-trigger="tv_sport"> Watches sport</label><br>
 <label><input type="checkbox" data-trigger="tv_movies"> Movies</label><br>
 <label><input type="checkbox" data-trigger="tv_netflix"> Netflix</label><br>
-<label><input type="checkbox" data-trigger="tv_sky"> Sky content</label><br>
-<label><input type="checkbox" data-trigger="tv_all"> Wants everything</label><br>
-<label><input type="checkbox" data-trigger="tv_subs"> Multiple subscriptions</label>
-
+<label><input type="checkbox" data-trigger="tv_sky"> Sky channels</label><br>
+<label><input type="checkbox" data-trigger="tv_all"> Wants everything</label>
 </div>
 
-
+<!-- MOBILE -->
 <div class="card">
-<div class="step-banner">Step 3 — Mobile</div>
+<div class="step-banner">📱 Mobile (Must Ask)</div>
 
-<label><input type="checkbox" data-trigger="m_high"> Paying too much (>£30)</label><br>
-<label><input type="checkbox" data-trigger="m_ooc"> Out of contract</label><br>
-<label><input type="checkbox" data-trigger="m_upgrade"> Wants a new phone</label><br>
-<label><input type="checkbox" data-trigger="m_family"> Family / multiple lines</label>
+<strong>Provider</strong><br>
+<label><input type="radio" name="m_provider" value="big3"> EE / O2 / Vodafone / Three</label><br>
+<label><input type="radio" name="m_provider" value="piggyback"> Tesco / Smarty / Lebara</label>
 
+<br>
+
+<strong>Monthly Spend</strong><br>
+<label><input type="radio" name="m_spend" value="low"> Under £10</label><br>
+<label><input type="radio" name="m_spend" value="mid"> £10–£25</label><br>
+<label><input type="radio" name="m_spend" value="high"> £25+</label>
+
+<br>
+
+<label><input type="checkbox" data-trigger="m_coverage"> Poor signal</label><br>
+<label><input type="checkbox" data-trigger="m_unlimited"> Needs unlimited data</label><br>
+<label><input type="checkbox" data-trigger="m_roaming"> Travels</label><br>
+<label><input type="checkbox" data-trigger="m_family"> Multiple lines</label>
 </div>
 
-
+<!-- TABLETS -->
 <div class="card">
-<div class="step-banner">Step 4 — Tablets</div>
+<div class="step-banner">💻 Tablets</div>
 
-<label><input type="checkbox" data-trigger="t_stream"> Watches content on phone</label><br>
-<label><input type="checkbox" data-trigger="t_child"> Family / child usage</label><br>
-<label><input type="checkbox" data-trigger="t_apple"> Apple household</label><br>
-<label><input type="checkbox" data-trigger="t_android"> Android household</label>
-
+<label><input type="checkbox" data-trigger="t_stream"> Watches TV on phone</label><br>
+<label><input type="checkbox" data-trigger="t_travel"> Travels / commuting</label><br>
+<label><input type="checkbox" data-trigger="t_child"> Kids usage</label>
 </div>
 
-
+<!-- WATCHES -->
 <div class="card">
-<div class="step-banner">Step 5 — Mobile Broadband</div>
+<div class="step-banner">⌚ Watches</div>
 
-<label><input type="checkbox" data-trigger="mbb_slow"> Speeds under 30Mb</label><br>
-<label><input type="checkbox" data-trigger="mbb_temp"> Temporary setup</label><br>
-<label><input type="checkbox" data-trigger="mbb_backup"> Backup connection</label>
-
-<div class="warning" style="margin-top:8px;">
-Only recommend if Full Fibre not available
+<label><input type="checkbox" data-trigger="w_active"> Gym / active</label><br>
+<label><input type="checkbox" data-trigger="w_outdoors"> Outdoors</label><br>
+<label><input type="checkbox" data-trigger="w_health"> Health tracking</label><br>
+<label><input type="checkbox" data-trigger="w_elderly"> Lives alone</label>
 </div>
-
-</div>
-
-
-<div class="card">
-<div class="step-banner">Step 6 — Watches</div>
-
-<label><input type="checkbox" data-trigger="w_apple"> Apple</label><br>
-<label><input type="checkbox" data-trigger="w_android"> Android</label>
-
-</div>
-
 
 <button onclick="runTool()">Evaluate</button>
 
 </div>
 
-<!-- RIGHT -->
+<!-- RIGHT SIDE -->
 <div>
 
-<div class="card"><h3>Broadband</h3><div id="bb"></div></div>
-<div class="card"><h3>TV</h3><div id="tv"></div></div>
-<div class="card"><h3>Mobile</h3><div id="mobile"></div></div>
-<div class="card"><h3>Tablets</h3><div id="tabs"></div></div>
-<div class="card"><h3>Mobile Broadband</h3><div id="mbb"></div></div>
-<div class="card"><h3>Watches</h3><div id="watch"></div></div>
+<div class="card"><h3>🧠 Live Prompts</h3><div id="prompts"></div></div>
+<div class="card"><h3>⚠️ Missed Opportunities</h3><div id="gaps"></div></div>
+
+<div class="card"><h3>📶 Broadband</h3><div id="bb"></div></div>
+<div class="card"><h3>📺 TV</h3><div id="tv"></div></div>
+<div class="card"><h3>📱 Mobile</h3><div id="mobile"></div></div>
+<div class="card"><h3>💻 Tablets</h3><div id="tabs"></div></div>
+<div class="card"><h3>⌚ Watches</h3><div id="watch"></div></div>
 
 <div class="card">
 <h3>Final Script</h3>
@@ -152,74 +124,9 @@ Only recommend if Full Fibre not available
 </div>
 
 </div>
-
-<!-- ADMIN TOGGLE -->
-<div class="admin-toggle" onclick="openAdmin()">⚙️ Admin</div>
-
-<!-- ADMIN PANEL -->
-<div class="admin-panel" id="adminPanel">
-<h3>Admin Edit Mode</h3>
-<textarea id="adminEditor"></textarea><br>
-<button onclick="saveConfig()">Save Changes</button>
-</div>
-
 </div>
 
 <script>
-
-/* PASSWORD */
-const PASSWORD = "Tdtofb_316";
-
-/* PRODUCTS */
-const PRODUCTS = {
-  broadband:["Full Fibre 150","Full Fibre 300","Full Fibre 500","Full Fibre 900","4G/5G Hub"],
-
-  tv: [
-    {name: "Entertainment", price: "£22", desc: "NOW Entertainment, HBO Max + Netflix (Ads)"},
-    {name: "Big Entertainment", price: "£32", desc: "NOW Entertainment + HBO Max + Cinema + Netflix"},
-    {name: "Sport", price: "£25", desc: "TNT Sports + UEFA + Premier League + 4K"},
-    {name: "Big Sport", price: "£51", desc: "TNT + Sky Sports + 4K"},
-    {name: "Full Works", price: "£88", desc: "Sky + Cinema + TNT + Netflix + HBO Max"}
-  ],
-
-  mobile: [
-    {name:"No Frills Unlimited", price:"~£12", desc:"Basic plan"},
-    {name:"Essentials Unlimited", price:"~£15", desc:"Everyday usage"},
-    {name:"All Rounder Unlimited", price:"~£24", desc:"Includes entertainment"},
-    {name:"Full Works Unlimited", price:"~£30", desc:"Premium plan"}
-  ],
-
-  tablets:[
-    {name:"Samsung Tab", price:"", desc:""},
-    {name:"iPad", price:"", desc:""},
-    {name:"Honor Pad", price:"", desc:""}
-  ],
-
-  watches:[
-    {name:"Apple Watch", price:"", desc:""},
-    {name:"Samsung Watch", price:"", desc:""}
-  ]
-};
-
-/* ADMIN */
-function openAdmin(){
-  const input = prompt("Enter admin password:");
-  if(input === PASSWORD){
-    document.getElementById("adminPanel").style.display="block";
-    document.getElementById("adminEditor").value =
-      JSON.stringify(PRODUCTS,null,2);
-  }
-}
-
-function saveConfig(){
-  try{
-    const newData = JSON.parse(document.getElementById("adminEditor").value);
-    Object.assign(PRODUCTS,newData);
-    alert("Updated ✅");
-  } catch(e){
-    alert("Invalid format ❌");
-  }
-}
 
 /* TRIGGERS */
 function triggers(){
@@ -233,16 +140,20 @@ function render(id,list){
   const node=document.getElementById(id);
   node.innerHTML="";
 
-  if(list.length === 0){
-    node.innerHTML = `<div class="result">No recommendation</div>`;
+  if(!list || list.length===0){
+    node.innerHTML=`<div class="result">None</div>`;
     return;
   }
 
   list.forEach((x,i)=>{
-    node.innerHTML += `<div class="result ${i===0?'best':''}">
+    let cls="result";
+    if(x.name.includes("⚠️")) cls+=" warning";
+    else if(i===0) cls+=" best";
+
+    node.innerHTML+=`
+    <div class="${cls}">
       <strong>${x.name}</strong>
-      ${x.price ? `<span style="color:#666;"> ${x.price}</span>` : ""}
-      <div style="font-size:12px;color:#666;">${x.desc || ""}</div>
+      ${x.desc?`<div>${x.desc}</div>`:""}
     </div>`;
   });
 }
@@ -250,153 +161,106 @@ function render(id,list){
 /* MAIN */
 function runTool(){
 
-  const t = triggers();
-  const ffNode = document.querySelector("input[name='ffAvailable']:checked");
-  const ff = ffNode ? ffNode.value : null;
+const t=triggers();
+const ff=document.querySelector("input[name='ffAvailable']:checked")?.value;
+
+/* TRACK DISCOVERY */
+const askedTV = t.tv_sport||t.tv_movies||t.tv_netflix||t.tv_sky||t.tv_all;
+
+const provider=document.querySelector("input[name='m_provider']:checked")?.value;
+const spend=document.querySelector("input[name='m_spend']:checked")?.value;
+
+const askedMobile = provider||spend||t.m_coverage||t.m_unlimited||t.m_roaming||t.m_family;
 
 /* BROADBAND */
-let bb = [];
+let bb=[];
+if(!ff){
+  bb.push({name:"⚠️ Confirm fibre availability"});
+}
+else if(ff==="no"){
+  bb.push({name:"5G Hub",desc:"Fibre unavailable"});
+}
+else{
+  if(t.bb_busy) bb.push({name:"Full Fibre 900"});
+  else if(t.bb_4k||t.bb_work) bb.push({name:"Full Fibre 500"});
+  else bb.push({name:"Full Fibre 300"});
 
-/* NO FIBRE */
-if(ff === "no"){
-  bb.push({name:"5G Hub", desc:"Fibre unavailable"});
+  if(t.bb_coverage) bb.push({name:"WiFi Extenders"});
 }
 
-/* FIBRE AVAILABLE */
-else {
-
-  /* -------- SPEED LOGIC (THIS IS THE BIT YOU ASKED FOR) -------- */
-
-  let speed = "Full Fibre 300"; // default
-
-  if(t.bb_busy){
-    speed = "Full Fibre 900";
-  }
-  else if(t.bb_4k || t.bb_work){
-    speed = "Full Fibre 500";
-  }
-  else if(t.bb_slow){
-    speed = "Full Fibre 300";
-  }
-
-  // Push main broadband recommendation
-  bb.push({name: speed});
-
-
-  /* -------- EE PACKAGE LOGIC -------- */
-
-  let packageTier = "Core";
-
-  if(t.bb_busy && t.bb_work){
-    packageTier = "Ultimate";
-  }
-  else if(t.bb_work || t.bb_4k){
-    packageTier = "Premium";
-  }
-  else if(t.bb_slow){
-    packageTier = "Standard";
-  }
-
-  // Add package ABOVE speed
-  bb.unshift({
-    name: `${packageTier} Package`,
-    desc: "Recommended based on usage"
-  });
-
-
-  /* -------- ADD-ONS / FIXES -------- */
-
-  if(t.bb_coverage){
-    bb.push({
-      name:"📶 WiFi Extenders",
-      desc:"Fixes poor coverage in the home"
-    });
-  }
-
-  if(t.bb_dropout){
-    bb.push({
-      name:"🟡 4G Backup",
-      desc:"Keeps connection running during outages"
-    });
-  }
-
-  if(t.bb_wifioptimiser || t.bb_work){
-    bb.push({
-      name:"⚡ WiFi Optimiser",
-      desc:"Improves stability and performance"
-    });
-  }
-
+/* TV */
+let tv=[];
+if(!askedTV){
+  tv.push({name:"⚠️ TV Not Explored"});
+}
+else{
+  if(t.tv_all) tv.push({name:"Full Works"});
+  else if(t.tv_sport) tv.push({name:"Sport Package"});
+  else tv.push({name:"Entertainment"});
 }
 
-
-
-  /* TV */
-  let tv = [];
-
-  if(t.tv_all || (t.tv_sport && t.tv_movies && t.tv_netflix)){
-    tv.push(PRODUCTS.tv.find(x=>x.name==="Full Works"));
-  } else if(t.tv_sport && t.tv_sky){
-    tv.push(PRODUCTS.tv.find(x=>x.name==="Big Sport"));
-  } else if(t.tv_sport){
-    tv.push(PRODUCTS.tv.find(x=>x.name==="Sport"));
-  } else if(t.tv_movies && t.tv_netflix){
-    tv.push(PRODUCTS.tv.find(x=>x.name==="Big Entertainment"));
-  } else if(t.tv_movies || t.tv_netflix){
-    tv.push(PRODUCTS.tv.find(x=>x.name==="Entertainment"));
+/* MOBILE */
+let mob=[];
+if(!askedMobile){
+  mob.push({name:"⚠️ Mobile Not Explored"});
+}
+else{
+  if(provider==="piggyback"){
+    mob.push({name:"Switch to EE",desc:"Better speed & reliability"});
   }
 
-  /* MOBILE */
-  let mob = [];
+  if(spend==="high") mob.push({name:"Full Works SIM"});
+  else if(spend==="mid") mob.push({name:"All Rounder SIM"});
+  else if(spend==="low") mob.push({name:"Essentials SIM"});
 
-  if(t.m_ooc && t.m_high){
-    mob.push(PRODUCTS.mobile[2]);
-  } else if(t.m_ooc){
-    mob.push(PRODUCTS.mobile[1]);
-  }
+  if(t.m_unlimited) mob.push({name:"Unlimited Data"});
+  if(t.m_coverage) mob.push({name:"Better Coverage"});
+}
 
-  if(t.m_upgrade){
-    mob.push({name:"Device Upgrade", desc:"Explore handset options"});
-  }
+/* TABLETS */
+let tab=[];
+if(t.t_stream) tab.push({name:"Tablet for streaming"});
+if(t.t_travel) tab.push({name:"4G Tablet"});
+if(t.t_child) tab.push({name:"Family tablet"});
 
-  /* TABLET */
-  let tab = [];
+/* WATCHES */
+let watch=[];
+if(t.w_active) watch.push({name:"Fitness Watch"});
+if(t.w_health) watch.push({name:"Health Watch"});
+if(t.w_elderly) watch.push({name:"Safety Watch",desc:"Fall detection"});
 
-  if(t.t_apple) tab.push({name:"iPad"});
-  if(t.t_android) tab.push({name:"Samsung Tab"});
+/* LIVE PROMPTS */
+let prompts=[];
+if(!ff) prompts.push({name:"Confirm fibre availability"});
+if(!askedTV) prompts.push({name:"Ask what they watch"});
+if(!askedMobile) prompts.push({name:"Ask about provider & spend"});
+if(t.tv_netflix && !t.t_stream) prompts.push({name:"They stream — mention tablet"});
+render("prompts",prompts);
 
-  /* MBB */
-  let mbb = [];
+/* MISSED OPPORTUNITIES */
+let gaps=[];
+if(ff==="yes" && !askedTV) gaps.push({name:"TV not explored"});
+if(!askedMobile) gaps.push({name:"Mobile not discussed"});
+if(!t.m_family) gaps.push({name:"No household discussion"});
+render("gaps",gaps);
 
-  if(ff === "no" && t.mbb_slow){
-    mbb.push({name:"5G Hub", desc:"Best for speed issues"});
-  }
+/* RENDER */
+render("bb",bb);
+render("tv",tv);
+render("mobile",mob);
+render("tabs",tab);
+render("watch",watch);
 
-  /* WATCH */
-  let watch = [];
-
-  if(t.w_apple) watch.push({name:"Apple Watch"});
-  if(t.w_android) watch.push({name:"Samsung Watch"});
-
-  /* RENDER */
-  render("bb",bb);
-  render("tv",tv);
-  render("mobile",mob);
-  render("tabs",tab);
-  render("mbb",mbb);
-  render("watch",watch);
-
-  document.getElementById("script").value =
+/* SCRIPT */
+document.getElementById("script").value =
 `Based on what you've told me:
 
-Broadband: ${bb[0]?.name || ""}
-TV: ${tv[0]?.name || ""}
-Mobile: ${mob[0]?.name || ""}
-Tablet: ${tab[0]?.name || ""}
-Mobile Broadband: ${mbb[0]?.name || ""}
-Watch: ${watch[0]?.name || ""}
+Broadband: ${bb[0]?.name||""}
+TV: ${tv[0]?.name||""}
+Mobile: ${mob[0]?.name||""}
 
 Does that sound right?`;
+
 }
 
 /* AUTO RUN */
@@ -405,3 +269,6 @@ document.querySelectorAll("input").forEach(el=>{
 });
 
 </script>
+
+</body>
+</html>
